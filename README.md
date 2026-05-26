@@ -1,45 +1,47 @@
-# Nixx Storefront Site
+﻿# Nixx Storefront Site
 
-Next.js storefront starter for Nixx 3D Printing, optimized for GitHub and Vercel.
+Static storefront starter for Nixx 3D Printing, Phoenix's 3D printed toy shop.
 
 ## What It Does
-- Shows a personal business homepage for Phoenix's 3D printed toys.
-- Lists starter products with prices and statuses.
-- Provides category filters.
+- Shows a product-first homepage using Phoenix's toy image and logo.
+- Lists starter products with prices, print notes, age/safety notes, and statuses.
+- Provides category filters and a local guided picker.
 - Lets visitors build a local draft cart.
 - Uses inquiry checkout instead of collecting money.
+- Emits local storefront events to `localStorage`, `window.dataLayer`, and `nixx:storefront-event` for future analytics wiring.
 
 ## Files
 | File | Purpose |
 |------|---------|
-| `src/app/page.tsx` | Homepage route |
-| `src/components/Storefront.tsx` | Product filters, draft cart, inquiry summary |
-| `src/data/products.ts` | Product catalog data |
-| `src/content/brand.ts` | Brand/contact data |
-| `src/app/globals.css` | Responsive design system and layout |
+| `index.html` | Static storefront page |
+| `style.css` | Responsive design system and layout |
+| `script.js` | Product catalog, filters, picker, draft cart, event hooks |
 | `DESIGN.md` | Design source of truth |
-| `public/images/hero-3d-toys.png` | Generated hero/product image |
-| `public/images/phoenix-logo.png` | Existing Nix/Phoenix logo asset |
+| `assets/images/hero-3d-toys.png` | Hero/product image |
+| `assets/images/phoenix-logo.png` | Nix/Phoenix logo asset |
+| `docs/ECOSYSTEM-WIRING.md` | How TE-Code tools connect later |
 
 ## Local Development
-```powershell
-npm install
-npm run dev
-```
-
-Production check:
+Open `index.html` directly, or serve the folder:
 
 ```powershell
-npm run lint
-npm run build
+cd D:\Phoenix\nix-code\nixx-storefront-site
+python -m http.server 4177
 ```
 
-## Deployment
-This project is set up for Vercel with `framework: nextjs` in `vercel.json`. Pushes to the GitHub default branch should auto-deploy after the Vercel project is connected.
+Then open `http://localhost:4177`.
+
+## Ecosystem Path
+- Product images and mockups: `D:\TE-Code\image-engine`
+- Storefront/client-site patterns: `D:\TE-Code\clients\glacier-ice-cream`
+- Funnel logic: `D:\TE-Code\openbazaar-ai`
+- Campaigns and launches: `D:\TE-Code\MarketingOS`
+- Guided assistant/chat: `D:\TE-Code\conversos`
+- Idea pipeline: `D:\TE-Code\TrendOS` and `D:\TE-Code\ProductOS`
 
 ## Before Launch
-- Replace starter product data with real inventory.
-- Add real product photos.
+- Replace starter product names with real product names.
+- Add one photo per product.
+- Set parent-approved contact email.
+- Add pickup/shipping, returns, and safety policies.
 - Choose checkout path: inquiry only, Stripe Payment Links, Square, Shopify, or another provider.
-- Add shipping, pickup, returns, and safety policies.
-- Set the final domain and Open Graph URL.
