@@ -1,4 +1,6 @@
-export type ProductCategory = "figures" | "accessories" | "custom";
+﻿export type ProductCategory = "figures" | "accessories" | "bundles" | "custom";
+
+export type ProductFunnel = "starter" | "gift" | "game" | "bundle" | "custom";
 
 export type Product = {
   id: string;
@@ -8,65 +10,109 @@ export type Product = {
   price: number;
   status: string;
   color: string;
+  image: string;
+  printTime: string;
+  ageNote: string;
+  funnel: ProductFunnel;
 };
 
 export const products: Product[] = [
   {
-    id: "hero-snap",
-    name: "Snap-Fit Hero",
+    id: "angel-of-peace",
+    name: "Angel of Peace",
     category: "figures",
     description:
-      "Articulated starter figure with color-batch parts and a display-ready stance.",
-    price: 10,
-    status: "starter drop",
-    color: "#f15a24",
-  },
-  {
-    id: "shadow-squad",
-    name: "Shadow Squad Figure",
-    category: "figures",
-    description: "A darker squad variant for building teams, battles, and shelf scenes.",
-    price: 10,
-    status: "planned batch",
-    color: "#4056f4",
-  },
-  {
-    id: "desk-dragon",
-    name: "Desk Dragon",
-    category: "accessories",
-    description: "Small flex-style creature for backpacks, desks, and gift boxes.",
-    price: 8,
-    status: "prototype",
+      "Winged guardian hero inspired by protection, kindness, and the light-versus-dark worlds Phoenix builds.",
+    price: 29.99,
+    status: "hero collection",
     color: "#26a69a",
+    image: "/images/products/guardian-mint.jpg",
+    printTime: "multi-part print",
+    ageNote: "Ages 6+",
+    funnel: "gift",
   },
   {
-    id: "game-token-pack",
-    name: "Game Token Pack",
+    id: "football-warrior",
+    name: "Football Warrior",
+    category: "figures",
+    description:
+      "Sports hero built from Phoenix's football dreams: fast routes, big plays, and never-back-down energy.",
+    price: 29.99,
+    status: "sports hero",
+    color: "#f15a24",
+    image: "/images/products/sports-skate.jpg",
+    printTime: "multi-part print",
+    ageNote: "Ages 6+",
+    funnel: "starter",
+  },
+  {
+    id: "battle-brawler",
+    name: "Battle Brawler",
+    category: "figures",
+    description:
+      "Shadow-squad action figure for epic missions, boss battles, and stories about courage under pressure.",
+    price: 29.99,
+    status: "shadow squad",
+    color: "#4056f4",
+    image: "/images/products/shadow-squad.jpg",
+    printTime: "batch print",
+    ageNote: "Ages 6+",
+    funnel: "starter",
+  },
+  {
+    id: "pixel-paladin",
+    name: "Pixel Paladin",
+    category: "figures",
+    description:
+      "Creative-builder figure that connects Phoenix's games, coding ideas, and toy universe into one hero.",
+    price: 29.99,
+    status: "creative builder",
+    color: "#ffd166",
+    image: "/images/products/hero-action.jpg",
+    printTime: "multi-part print",
+    ageNote: "Ages 6+",
+    funnel: "starter",
+  },
+  {
+    id: "builders-tool-pack",
+    name: "Hero Gear Pack",
     category: "accessories",
-    description: "Printed counters, markers, and tiny props for tabletop games.",
+    description:
+      "Weapons, tools, helmets, and extra parts that let each Dummy 13 hero change class, mission, or backstory.",
     price: 6,
-    status: "ready idea",
+    status: "accessory path",
     color: "#a8552b",
+    image: "/images/products/accessory-pack.jpg",
+    printTime: "quick batch",
+    ageNote: "Small parts",
+    funnel: "game",
   },
   {
-    id: "custom-mini",
-    name: "Custom Mini Print",
+    id: "starter-squad",
+    name: "Dummy 13 Starter Squad",
+    category: "bundles",
+    description:
+      "A first collection bundle for kids who want the start of a full character universe, not just one toy.",
+    price: 79.99,
+    status: "bundle idea",
+    color: "#151312",
+    image: "/images/products/starter-squad.jpg",
+    printTime: "multi-print batch",
+    ageNote: "Adult review",
+    funnel: "bundle",
+  },
+  {
+    id: "custom-hero",
+    name: "Custom Hero Request",
     category: "custom",
     description:
-      "Small custom print request reviewed for size, color, and printability.",
-    price: 12,
+      "Request a hero colorway, accessory combo, motto, or simple character idea for Phoenix to review.",
+    price: 29.99,
     status: "inquiry only",
-    color: "#ffd166",
-  },
-  {
-    id: "color-drop",
-    name: "Mystery Color Drop",
-    category: "figures",
-    description:
-      "Limited color combination selected from filament currently on the printer.",
-    price: 10,
-    status: "limited",
-    color: "#151312",
+    color: "#f15a24",
+    image: "/images/products/hero-action.jpg",
+    printTime: "quote first",
+    ageNote: "Adult review",
+    funnel: "custom",
   },
 ];
-

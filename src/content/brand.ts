@@ -5,10 +5,13 @@ export const brand = {
   github: "https://github.com/Nixxed09",
   contactEmail: "orders@nixx.it.com",
   description:
-    "A small maker storefront for 3D printed snap-fit toys, figures, accessories, and custom print ideas.",
+    "Phoenix's maker storefront for Dummy 13 heroes, snap-fit toys, story-driven figures, accessories, and custom print ideas.",
   valueProposition:
-    "3D printed toys with real maker energy: colorful batches, clear prices, custom ideas, and a path to real checkout when inventory is ready.",
-  audience: ["kids", "parents", "gift buyers", "local supporters"],
-  tones: ["playful", "clear", "maker-built", "trustworthy"],
+    "3D printed heroes with real maker energy: colorful batches, character stories, clear prices, custom ideas, and a parent-reviewed inquiry path.",
+  mission:
+    "Prove kids can build amazing things, not just play with them, by turning imagination into figures, games, and stories.",
+  makerStory:
+    "Phoenix is a young builder, athlete, gamer, and storyteller who sees worlds where other people see parts. Nixx turns that energy into collectible characters kids can play with, display, and imagine into bigger adventures.",
+  audience: ["kids", "parents", "gift buyers", "local supporters", "young creators"],
+  tones: ["heroic", "playful", "clear", "maker-built", "trustworthy"],
 };
-

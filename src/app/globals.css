@@ -254,9 +254,32 @@ section {
 }
 
 .shop-section,
-.process-section {
+.process-section,
+.story-section,
+.storybook-section {
   max-width: var(--max);
   margin: 0 auto;
+}
+
+.story-section {
+  display: grid;
+  grid-template-columns: minmax(0, 0.8fr) minmax(280px, 1fr);
+  gap: 1.5rem;
+  align-items: start;
+  border-top: 1px solid var(--line);
+  border-bottom: 1px solid var(--line);
+}
+
+.story-copy {
+  display: grid;
+  gap: 1rem;
+  color: var(--muted);
+  font-size: 1.08rem;
+  line-height: 1.65;
+}
+
+.story-copy p {
+  margin: 0;
 }
 
 .section-heading {
@@ -534,3 +557,216 @@ section {
   }
 }
 
+
+.hero-proof {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.55rem;
+  margin-top: 1.25rem;
+}
+
+.hero-proof span,
+.product-specs span {
+  display: inline-flex;
+  align-items: center;
+  min-height: 32px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: var(--panel);
+  color: var(--ink);
+  padding: 0.35rem 0.65rem;
+  font-size: 0.85rem;
+  font-weight: 800;
+}
+
+.product-card {
+  position: relative;
+  overflow: hidden;
+}
+
+.product-card::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 5px;
+  background: var(--product-color, var(--ember));
+}
+
+.product-art {
+  position: relative;
+  min-height: 178px;
+  overflow: hidden;
+  align-items: end;
+  justify-items: start;
+  background: var(--ink);
+  border-color: color-mix(in srgb, var(--product-color, var(--ink)) 70%, var(--ink));
+  padding: 0.75rem;
+}
+
+.product-art::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(21, 19, 18, 0.02), rgba(21, 19, 18, 0.62));
+  z-index: 1;
+}
+
+.product-art img {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.product-art span {
+  position: relative;
+  z-index: 2;
+  background: rgba(251, 247, 239, 0.92);
+  color: var(--ink);
+  border: 1px solid var(--ink);
+  border-radius: 999px;
+  padding: 0.35rem 0.65rem;
+  text-transform: uppercase;
+  font-size: 0.75rem;
+}
+
+.product-copy {
+  display: grid;
+  gap: 0.45rem;
+}
+
+.product-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.45rem;
+}
+
+.picker-section,
+.bench-section {
+  max-width: var(--max);
+  margin: 0 auto;
+}
+
+.story-card-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 1rem;
+}
+
+.story-card-grid article {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1rem;
+  box-shadow: 0 8px 28px rgba(35, 22, 12, 0.08);
+}
+
+.story-card-grid span {
+  display: inline-grid;
+  place-items: center;
+  width: 2.4rem;
+  height: 2.4rem;
+  border-radius: 50%;
+  background: var(--blueberry);
+  color: white;
+  font-weight: 900;
+  margin-bottom: 1rem;
+}
+
+.story-card-grid p {
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 0.65rem 0 0;
+}
+
+.picker-layout {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.85fr) minmax(280px, 1.15fr);
+  gap: 1rem;
+  align-items: stretch;
+}
+
+.picker-options,
+.picker-result {
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+  padding: 1rem;
+  box-shadow: 0 8px 28px rgba(35, 22, 12, 0.08);
+}
+
+.picker-options {
+  display: grid;
+  gap: 0.65rem;
+}
+
+.picker-options button {
+  justify-content: flex-start;
+  background: var(--panel);
+}
+
+.picker-result {
+  border: 2px solid var(--ink);
+  display: grid;
+  align-content: center;
+  gap: 0.75rem;
+}
+
+.picker-result p {
+  color: var(--muted);
+  line-height: 1.55;
+  margin: 0;
+}
+
+.bench-section {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(160px, 260px);
+  gap: 1.5rem;
+  align-items: center;
+  border-top: 1px solid var(--line);
+}
+
+.bench-copy p:not(.eyebrow) {
+  color: var(--muted);
+  line-height: 1.6;
+  max-width: 46rem;
+}
+
+.bench-section img {
+  width: min(220px, 60vw);
+  height: auto;
+  justify-self: end;
+  border-radius: 50%;
+  border: 2px solid var(--ink);
+  background: var(--panel);
+  box-shadow: var(--shadow);
+}
+
+@media (max-width: 900px) {
+  .picker-layout,
+  .bench-section,
+  .story-section {
+    grid-template-columns: 1fr;
+  }
+
+  .bench-section img {
+    justify-self: start;
+  }
+}
+
+@media (max-width: 680px) {
+  .hero-proof span,
+  .product-specs span {
+    width: 100%;
+    border-radius: 6px;
+  }
+
+  .product-art {
+    min-height: 210px;
+  }
+
+  .story-card-grid {
+    grid-template-columns: 1fr;
+  }
+}

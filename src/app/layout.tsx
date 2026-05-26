@@ -1,20 +1,28 @@
-import type { Metadata } from "next";
+﻿import type { Metadata } from "next";
 import "./globals.css";
 
 export const metadata: Metadata = {
-  title: "Nixx 3D Printing | 3D Printed Toys by Phoenix",
+  title: "Nixx 3D Printing | Dummy 13 Heroes by Phoenix",
   description:
-    "Nixx 3D Printing is Phoenix's storefront for 3D printed snap-fit toys, figures, accessories, and custom print ideas.",
+    "Nixx 3D Printing is Phoenix's storefront for Dummy 13 heroes, story-driven snap-fit toys, accessories, and custom print ideas.",
   authors: [{ name: "Phoenix" }],
   metadataBase: new URL("https://nixx.it.com"),
   openGraph: {
     title: "Nixx 3D Printing",
     description:
-      "3D printed toys, snap-fit figures, and custom print drops by Phoenix.",
+      "Dummy 13 heroes, story-driven snap-fit figures, and custom print drops by Phoenix.",
     url: "https://nixx.it.com",
     siteName: "Nixx 3D Printing",
-    images: [{ url: "/images/hero-3d-toys.png", width: 1024, height: 1024 }],
+    images: [{ url: "/images/products/hero-action.jpg", width: 1600, height: 1067 }],
     type: "website",
+  },
+  icons: {
+    icon: "/favicon.ico",
+    apple: "/apple-touch-icon.png",
+  },
+  manifest: "/site.webmanifest",
+  other: {
+    "theme-color": "#f15a24",
   },
 };
 
@@ -34,4 +42,3 @@ export default function RootLayout({
     </html>
   );
 }
-

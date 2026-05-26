@@ -39,3 +39,23 @@ Recommended destinations:
 3. Add a parent-approved form endpoint before using paid ads or public campaigns.
 4. Convert the guided picker into a Conversos mission after product categories are stable.
 5. Add MarketingOS brand config only after contact email, safety policy, and product names are final.
+
+## Local Asset Sources Added
+
+| Source | Use | App destination |
+|--------|-----|-----------------|
+| `D:\Phoenix\3D Print\Pictures\Dummy 13 - 5.5.25\Dummy-13` | Real Dummy 13 product photography | `public/images/products/` optimized JPGs |
+| `D:\Phoenix\logo\favicon_io` | Browser icons and manifest | `public/favicon.ico`, `public/apple-touch-icon.png`, `public/android-chrome-*.png`, `public/site.webmanifest` |
+
+Original product photos are 7-21 MB each, so do not serve them directly. Create web-sized derivatives around 1600px wide/high and keep them under roughly 250 KB where possible.
+
+Current optimized image mapping:
+
+| App image | Source photo |
+|-----------|--------------|
+| `hero-action.jpg` | `Nix-d13-13.jpg` |
+| `guardian-mint.jpg` | `Nix-d13-01.jpg` |
+| `sports-skate.jpg` | `Nix-d13-08.jpg` |
+| `shadow-squad.jpg` | `Nix-d13-24.jpg` |
+| `starter-squad.jpg` | `Nix-d13-40.jpg` |
+| `accessory-pack.jpg` | `Nix-d13-10.jpg` |

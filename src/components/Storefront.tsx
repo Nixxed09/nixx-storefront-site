@@ -1,19 +1,61 @@
-"use client";
+﻿"use client";
 
-import { useMemo, useState } from "react";
+import { useMemo, useState, type CSSProperties } from "react";
 import Image from "next/image";
 import { brand } from "@/content/brand";
 import { products, type Product, type ProductCategory } from "@/data/products";
 
 type Filter = "all" | ProductCategory;
 type Cart = Record<string, number>;
+type StorefrontEvent = {
+  type: string;
+  payload: Record<string, unknown>;
+  source: "nixx-storefront-site";
+  at: string;
+};
 
 const filters: { label: string; value: Filter }[] = [
   { label: "All", value: "all" },
   { label: "Figures", value: "figures" },
   { label: "Accessories", value: "accessories" },
+  { label: "Bundles", value: "bundles" },
   { label: "Custom", value: "custom" },
 ];
+
+const pickerMap = {
+  gift: {
+    productId: "starter-squad",
+    label: "Gift for a kid",
+    title: "Starter Squad Bundle",
+    text: "Best first gift path: one small bundle, clear color choice, and parent review before printing.",
+  },
+  desk: {
+    productId: "angel-of-peace",
+    label: "Display hero",
+    title: "Angel of Peace",
+    text: "Best display path: a story-rich guardian figure with a strong silhouette and gift-ready presence.",
+  },
+  game: {
+    productId: "builders-tool-pack",
+    label: "Gear or game prop",
+    title: "Hero Gear Pack",
+    text: "Best game path: extra gear, tools, and parts that connect the figures to missions and tabletop ideas.",
+  },
+  idea: {
+    productId: "custom-hero",
+    label: "Custom idea",
+    title: "Custom Hero Request",
+    text: "Best custom path: describe the hero, colors, gear, motto, and timing so Phoenix can check printability.",
+  },
+} satisfies Record<string, { productId: string; label: string; title: string; text: string }>;
+
+type PickerKey = keyof typeof pickerMap;
+
+declare global {
+  interface Window {
+    dataLayer?: StorefrontEvent[];
+  }
+}
 
 function money(value: number) {
   return `$${value}`;
@@ -30,10 +72,31 @@ function cartEntries(cart: Cart) {
     );
 }
 
+function trackStorefrontEvent(type: string, payload: Record<string, unknown> = {}) {
+  if (typeof window === "undefined") {
+    return;
+  }
+
+  const event: StorefrontEvent = {
+    type,
+    payload,
+    source: "nixx-storefront-site",
+    at: new Date().toISOString(),
+  };
+
+  const key = "nixx_storefront_events";
+  const current = JSON.parse(window.localStorage.getItem(key) || "[]") as StorefrontEvent[];
+  window.localStorage.setItem(key, JSON.stringify([...current, event].slice(-50)));
+  window.dataLayer = window.dataLayer || [];
+  window.dataLayer.push(event);
+  window.dispatchEvent(new CustomEvent("nixx:storefront-event", { detail: event }));
+}
+
 export function Storefront() {
   const [filter, setFilter] = useState<Filter>("all");
   const [cart, setCart] = useState<Cart>({});
   const [cartOpen, setCartOpen] = useState(false);
+  const [pickerKey, setPickerKey] = useState<PickerKey | null>(null);
 
   const visibleProducts = useMemo(
     () =>
@@ -57,21 +120,34 @@ export function Storefront() {
             (entry) =>
               `${entry.quantity} x ${entry.product.name} (${money(
                 entry.product.price,
-              )} each)`,
+              )} each, ${entry.product.printTime}, ${entry.product.ageNote})`,
           )
-          .join("\n")}\n\nEstimated total: ${money(total)}`
+          .join("\n")}\n\nEstimated total: ${money(
+          total,
+        )}\n\nNotes: Please confirm colors, timing, pickup/shipping, and small-parts safety before printing.`
       : "I want to ask about Nixx 3D Printing products.";
 
   const inquiryHref = `mailto:${brand.contactEmail}?subject=${encodeURIComponent(
     "Nixx 3D Printing order inquiry",
   )}&body=${encodeURIComponent(inquiryBody)}`;
 
-  function addToCart(id: string) {
+  const picker = pickerKey ? pickerMap[pickerKey] : null;
+  const pickerProduct = picker
+    ? products.find((product) => product.id === picker.productId)
+    : null;
+
+  function addToCart(id: string, source = "card") {
+    const product = products.find((item) => item.id === id);
     setCart((current) => ({
       ...current,
       [id]: (current[id] ?? 0) + 1,
     }));
     setCartOpen(true);
+    trackStorefrontEvent("draft_cart_add", {
+      productId: id,
+      source,
+      funnel: product?.funnel,
+    });
   }
 
   function removeFromCart(id: string) {
@@ -85,6 +161,20 @@ export function Storefront() {
       }
       return next;
     });
+    trackStorefrontEvent("draft_cart_remove", { productId: id });
+  }
+
+  function chooseFilter(value: Filter) {
+    setFilter(value);
+    trackStorefrontEvent("product_filter", { category: value });
+  }
+
+  function choosePicker(value: PickerKey) {
+    setPickerKey(value);
+    trackStorefrontEvent("guided_picker_select", {
+      pick: value,
+      productId: pickerMap[value].productId,
+    });
   }
 
   return (
@@ -96,6 +186,7 @@ export function Storefront() {
         </a>
         <nav className="nav" aria-label="Primary navigation">
           <a href="#shop">Shop</a>
+          <a href="#picker">Picker</a>
           <a href="#custom">Custom</a>
           <a href="#process">Process</a>
           <a href="#contact">Contact</a>
@@ -103,7 +194,12 @@ export function Storefront() {
         <button
           className="cart-pill"
           type="button"
-          onClick={() => setCartOpen((open) => !open)}
+          onClick={() => {
+            setCartOpen((open) => {
+              trackStorefrontEvent("draft_cart_toggle", { open: !open });
+              return !open;
+            });
+          }}
           aria-label="Open draft cart"
         >
           Cart <span>{totalItems}</span>
@@ -114,23 +210,29 @@ export function Storefront() {
         <section className="hero" id="top">
           <div className="hero-copy">
             <p className="eyebrow">Printed, snapped, and packed by Phoenix</p>
-            <h1>3D printed toys with real maker energy.</h1>
+            <h1>Dummy 13 heroes from Phoenix&apos;s world.</h1>
             <p className="hero-text">
-              Shop snap-fit figures, pocket accessories, color drops, and custom
-              print ideas from a small creative workshop.
+              Phoenix is a kid builder, football dreamer, gamer, and storyteller.
+              Nixx turns his characters into snap-fit figures, gear packs,
+              starter squads, and custom hero ideas.
             </p>
             <div className="hero-actions">
               <a className="button primary" href="#shop">
                 Shop starter drops
               </a>
-              <a className="button secondary" href="#custom">
-                Request a custom print
+              <a className="button secondary" href="#picker">
+                Find the right print
               </a>
+            </div>
+            <div className="hero-proof" aria-label="Store notes">
+              <span>Parent-approved inquiry flow</span>
+              <span>No payment collected here</span>
+              <span>Small parts warning included</span>
             </div>
           </div>
           <figure className="hero-media">
             <Image
-              src="/images/hero-3d-toys.png"
+              src="/images/products/hero-action.jpg"
               alt="Colorful 3D printed snap-fit toys on a maker workbench"
               width={1024}
               height={1024}
@@ -141,16 +243,31 @@ export function Storefront() {
 
         <section className="stats-strip" aria-label="Store highlights">
           <div>
-            <strong>$10</strong>
-            <span>starter toys</span>
+            <strong>Dummy 13</strong>
+            <span>character universe</span>
           </div>
           <div>
-            <strong>4</strong>
-            <span>launch squads</span>
+            <strong>Story</strong>
+            <span>with every hero</span>
           </div>
           <div>
-            <strong>Custom</strong>
-            <span>print ideas welcome</span>
+            <strong>Games</strong>
+            <span>and toys connected</span>
+          </div>
+        </section>
+
+        <section className="story-section" aria-labelledby="story-heading">
+          <div className="story-lead">
+            <p className="eyebrow">Why Nixx exists</p>
+            <h2 id="story-heading">Phoenix builds worlds, not just toys.</h2>
+          </div>
+          <div className="story-copy">
+            <p>{brand.makerStory}</p>
+            <p>
+              Each Dummy 13 figure can grow into a mini legend: a name, motto,
+              class, signature gear, origin story, and a challenge that teaches
+              courage, creativity, grit, or kindness.
+            </p>
           </div>
         </section>
 
@@ -159,8 +276,9 @@ export function Storefront() {
             <p className="eyebrow">Starter shop</p>
             <h2>Pick a print batch</h2>
             <p>
-              These starter listings are ready for real names, photos, colors,
-              and availability as products are finalized.
+              These starter listings are set up like collectible character drops:
+              clear category, print status, estimated price, safety note, and a
+              draft-cart inquiry path.
             </p>
           </div>
 
@@ -170,7 +288,7 @@ export function Storefront() {
                 className={`filter ${filter === item.value ? "active" : ""}`}
                 key={item.value}
                 type="button"
-                onClick={() => setFilter(item.value)}
+                onClick={() => chooseFilter(item.value)}
               >
                 {item.label}
               </button>
@@ -182,17 +300,29 @@ export function Storefront() {
               <article className="product-card" key={product.id}>
                 <div
                   className="product-art"
-                  style={{
-                    background: `linear-gradient(135deg, ${product.color}, #151312)`,
-                  }}
+                  style={{ "--product-color": product.color } as CSSProperties}
                 >
-                  {product.name}
+                  <Image
+                    src={product.image}
+                    alt="Colorful 3D printed toys on a workbench"
+                    width={640}
+                    height={480}
+                    sizes="(max-width: 680px) 100vw, (max-width: 1100px) 50vw, 25vw"
+                  />
+                  <span>{product.category}</span>
                 </div>
-                <h3>{product.name}</h3>
-                <p>{product.description}</p>
+                <div className="product-copy">
+                  <span className="status">{product.status}</span>
+                  <h3>{product.name}</h3>
+                  <p>{product.description}</p>
+                </div>
+                <div className="product-specs" aria-label="Product details">
+                  <span>{product.printTime}</span>
+                  <span>{product.ageNote}</span>
+                </div>
                 <div className="product-meta">
                   <span className="price">{money(product.price)}</span>
-                  <span className="status">{product.status}</span>
+                  <span className="status">{product.funnel}</span>
                 </div>
                 <button
                   className="add-button"
@@ -206,6 +336,75 @@ export function Storefront() {
           </div>
         </section>
 
+        <section className="picker-section" id="picker">
+          <div className="section-heading">
+            <p className="eyebrow">Guided picker</p>
+            <h2>Not sure what to choose?</h2>
+            <p>
+              Pick the kind of gift or project, and the site will suggest a
+              starter drop. This stays local for now and can become a real chat
+              helper later.
+            </p>
+          </div>
+          <div className="picker-layout">
+            <div className="picker-options" aria-label="Product picker choices">
+              {(Object.entries(pickerMap) as [PickerKey, (typeof pickerMap)[PickerKey]][]).map(
+                ([key, item]) => (
+                  <button key={key} type="button" onClick={() => choosePicker(key)}>
+                    {item.label}
+                  </button>
+                ),
+              )}
+            </div>
+            <article className="picker-result">
+              <span className="status">{picker ? "Suggested path" : "Start here"}</span>
+              <h3>{picker?.title ?? "Choose a path"}</h3>
+              <p>
+                {picker?.text ??
+                  "Answer one quick prompt to get a product suggestion and a cleaner inquiry message."}
+              </p>
+              {pickerProduct ? (
+                <button
+                  className="add-button"
+                  type="button"
+                  onClick={() => addToCart(pickerProduct.id, "picker")}
+                >
+                  Add {pickerProduct.name}
+                </button>
+              ) : null}
+            </article>
+          </div>
+        </section>
+
+        <section className="storybook-section" aria-labelledby="storybook-heading">
+          <div className="section-heading">
+            <p className="eyebrow">Character books</p>
+            <h2 id="storybook-heading">The next upgrade is story.</h2>
+            <p>
+              The Phoenix docs make the best product idea clear: every figure
+              should have a life beyond the print. Stories make the toys more
+              collectible, more personal, and easier for kids to imagine with.
+            </p>
+          </div>
+          <div className="story-card-grid">
+            <article>
+              <span>01</span>
+              <h3>Origin</h3>
+              <p>Where the hero came from, what zone they protect, and why they matter.</p>
+            </article>
+            <article>
+              <span>02</span>
+              <h3>Gear</h3>
+              <p>Helmet, weapon, armor, tool pack, special move, and power-up moment.</p>
+            </article>
+            <article>
+              <span>03</span>
+              <h3>Lesson</h3>
+              <p>A challenge that ends with courage, cleverness, kindness, or grit.</p>
+            </article>
+          </div>
+        </section>
+
         <section className="custom-section" id="custom">
           <div>
             <p className="eyebrow">Custom prints</p>
@@ -214,8 +413,9 @@ export function Storefront() {
           <div className="custom-panel">
             <p>
               Send the idea, size, colors, and when you need it. Phoenix can
-              review what is printable, what needs support, and what should be
-              simplified before pricing.
+              review what is printable, what needs support, what should be
+              simplified, whether the finished print has small parts, and what
+              kind of story the character should carry.
             </p>
             <a
               className="button primary"
@@ -243,20 +443,43 @@ export function Storefront() {
               <span>The site prepares a message instead of collecting payment.</span>
             </li>
             <li>
-              <strong>Print and pack.</strong>
+              <strong>Confirm the details.</strong>
               <span>
-                Products can move to real checkout after pricing, shipping, and
-                inventory are final.
+                Colors, pickup or shipping, timing, and small-parts safety get
+                checked before printing.
               </span>
             </li>
           </ol>
+        </section>
+
+        <section className="bench-section" aria-label="Maker bench">
+          <div className="bench-copy">
+            <p className="eyebrow">Maker bench</p>
+            <h2>Built around Phoenix&apos;s actual creative lanes.</h2>
+            <p>
+              The store can connect to his games, Dummy 13 stories, football
+              heroes, and future books. As new prints are photographed, each card
+              can get its own picture, colorway, print time, availability note,
+              and origin-story link.
+            </p>
+          </div>
+          <Image
+            src="/images/phoenix-logo.png"
+            alt="Phoenix logo for Nix projects"
+            width={260}
+            height={260}
+          />
         </section>
 
         <section className="contact-section" id="contact">
           <div>
             <p className="eyebrow">Business base</p>
             <h2>{brand.name}</h2>
-            <p>Built for toys, custom prints, future drops, and a real storefront path.</p>
+            <p>
+              Built for toys, custom prints, future drops, and a real storefront
+              path. Recommended for ages 6+ with adult review for small parts.
+              Made to prove kids can build amazing things, not just play with them.
+            </p>
           </div>
           <a
             className="button secondary"
@@ -303,7 +526,15 @@ export function Storefront() {
           <span>Estimated total</span>
           <strong>{money(total)}</strong>
         </div>
-        <a className="button primary full" href={inquiryHref}>
+        <a
+          className="button primary full"
+          href={inquiryHref}
+          onClick={() =>
+            trackStorefrontEvent("inquiry_started", {
+              items: entries.map((entry) => entry.product.id),
+            })
+          }
+        >
           Send inquiry
         </a>
         <p className="cart-note">No payment is collected on this starter site.</p>
@@ -311,3 +542,5 @@ export function Storefront() {
     </>
   );
 }
+
+
