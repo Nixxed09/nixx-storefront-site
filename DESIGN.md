@@ -41,3 +41,15 @@ Small, useful motion only: button press feedback, cart updates, filter changes, 
 ## Accessibility
 High contrast text, visible focus states, real buttons for filters/cart actions, semantic sections, and descriptive image alt text.
 
+
+## Feature Modules
+- Product grid: static catalog with category filters, price, status, print time, and age/safety note.
+- Guided picker: local product recommendation flow that can later become a Conversos mission.
+- Draft cart: inquiry-first cart with no payment collection.
+- Event hooks: local analytics events for future MarketingOS or AnalyticsOS ingestion.
+
+## Reference Implementations
+- Glacier Ice Cream informs the client-site structure and inquiry path.
+- OpenBazaar AI informs the starter -> bundle -> custom funnel shape.
+- Image Engine owns future product photos, mockups, and thumbnails.
+- MarketingOS should only be wired after contact, safety, and product policy details are final.
