@@ -733,6 +733,10 @@ section {
   max-width: 46rem;
 }
 
+.bench-copy .button {
+  margin-top: 1rem;
+}
+
 .bench-section img {
   width: min(220px, 60vw);
   height: auto;
@@ -741,6 +745,13 @@ section {
   border: 2px solid var(--ink);
   background: var(--panel);
   box-shadow: var(--shadow);
+}
+
+.contact-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: flex-end;
 }
 
 @media (max-width: 900px) {
@@ -752,6 +763,10 @@ section {
 
   .bench-section img {
     justify-self: start;
+  }
+
+  .contact-actions {
+    justify-content: flex-start;
   }
 }
 

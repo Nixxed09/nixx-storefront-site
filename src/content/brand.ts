@@ -3,6 +3,7 @@ export const brand = {
   maker: "Phoenix",
   domain: "nixx.it.com",
   github: "https://github.com/Nixxed09",
+  gamesSite: "https://www.nix-games.com/",
   contactEmail: "orders@nixx.it.com",
   description:
     "Phoenix's maker storefront for Dummy 13 heroes, snap-fit toys, story-driven figures, accessories, and custom print ideas.",

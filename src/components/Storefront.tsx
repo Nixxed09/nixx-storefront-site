@@ -189,6 +189,9 @@ export function Storefront() {
           <a href="#picker">Picker</a>
           <a href="#custom">Custom</a>
           <a href="#process">Process</a>
+          <a href={brand.gamesSite} target="_blank" rel="noopener noreferrer">
+            Games
+          </a>
           <a href="#contact">Contact</a>
         </nav>
         <button
@@ -462,6 +465,14 @@ export function Storefront() {
               can get its own picture, colorway, print time, availability note,
               and origin-story link.
             </p>
+            <a
+              className="button secondary"
+              href={brand.gamesSite}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Play Nix Games
+            </a>
           </div>
           <Image
             src="/images/phoenix-logo.png"
@@ -481,14 +492,24 @@ export function Storefront() {
               Made to prove kids can build amazing things, not just play with them.
             </p>
           </div>
-          <a
-            className="button secondary"
-            href={brand.github}
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            GitHub
-          </a>
+          <div className="contact-actions">
+            <a
+              className="button secondary"
+              href={brand.gamesSite}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Nix Games
+            </a>
+            <a
+              className="button secondary"
+              href={brand.github}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              GitHub
+            </a>
+          </div>
         </section>
       </main>
 
