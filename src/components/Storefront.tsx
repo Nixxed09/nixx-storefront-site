@@ -2,6 +2,7 @@
 
 import { useMemo, useState, type CSSProperties } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import { brand } from "@/content/brand";
 import { products, type Product, type ProductCategory } from "@/data/products";
 
@@ -20,6 +21,43 @@ const filters: { label: string; value: Filter }[] = [
   { label: "Accessories", value: "accessories" },
   { label: "Bundles", value: "bundles" },
   { label: "Custom", value: "custom" },
+];
+
+const categoryLabels: Record<ProductCategory, string> = {
+  figures: "figures",
+  accessories: "gear",
+  bundles: "bundles",
+  custom: "custom",
+};
+
+const phoenixWorlds = [
+  {
+    title: "Light Warrior",
+    label: "Hero lane",
+    text: "Protection, courage, and shadow-boss stories from the Nix Games universe.",
+  },
+  {
+    title: "Empire Flow",
+    label: "Builder lane",
+    text: "Automation, base-building, and resource strategy turned into gear packs and missions.",
+  },
+  {
+    title: "Dummy 13",
+    label: "Toy lane",
+    text: "Snap-fit figures with colorways, helmets, hands, wings, stands, and character drops.",
+  },
+];
+
+const catalogLanes = [
+  "Base kits",
+  "Hero helmets",
+  "Football hands",
+  "Octopus arms",
+  "Wings",
+  "Skateboards",
+  "Guitars",
+  "Minecraft packs",
+  "Display stands",
 ];
 
 const pickerMap = {
@@ -85,7 +123,13 @@ function trackStorefrontEvent(type: string, payload: Record<string, unknown> = {
   };
 
   const key = "nixx_storefront_events";
-  const current = JSON.parse(window.localStorage.getItem(key) || "[]") as StorefrontEvent[];
+  let current: StorefrontEvent[] = [];
+  try {
+    const stored = window.localStorage.getItem(key);
+    current = stored ? (JSON.parse(stored) as StorefrontEvent[]) : [];
+  } catch {
+    current = [];
+  }
   window.localStorage.setItem(key, JSON.stringify([...current, event].slice(-50)));
   window.dataLayer = window.dataLayer || [];
   window.dataLayer.push(event);
@@ -204,6 +248,7 @@ export function Storefront() {
             });
           }}
           aria-label="Open draft cart"
+          aria-expanded={cartOpen}
         >
           Cart <span>{totalItems}</span>
         </button>
@@ -229,6 +274,7 @@ export function Storefront() {
             </div>
             <div className="hero-proof" aria-label="Store notes">
               <span>Parent-approved inquiry flow</span>
+              <span>Nix Games energy</span>
               <span>No payment collected here</span>
               <span>Small parts warning included</span>
             </div>
@@ -246,16 +292,16 @@ export function Storefront() {
 
         <section className="stats-strip" aria-label="Store highlights">
           <div>
+            <strong>32+</strong>
+            <span>catalog ideas ready to sort</span>
+          </div>
+          <div>
+            <strong>Nix Games</strong>
+            <span>brand language carried over</span>
+          </div>
+          <div>
             <strong>Dummy 13</strong>
-            <span>character universe</span>
-          </div>
-          <div>
-            <strong>Story</strong>
-            <span>with every hero</span>
-          </div>
-          <div>
-            <strong>Games</strong>
-            <span>and toys connected</span>
+            <span>heroes, gear, and bundles</span>
           </div>
         </section>
 
@@ -271,6 +317,35 @@ export function Storefront() {
               class, signature gear, origin story, and a challenge that teaches
               courage, creativity, grit, or kindness.
             </p>
+          </div>
+        </section>
+
+        <section className="world-section" aria-labelledby="world-heading">
+          <div className="world-copy">
+            <p className="eyebrow">Phoenix brand bridge</p>
+            <h2 id="world-heading">The toy shop should feel connected to the games.</h2>
+            <p>
+              Nix Games brings the fire, glow, and heroic language. Nixx 3D
+              Printing turns that energy into physical characters parents can
+              understand and kids can actually play with.
+            </p>
+            <a
+              className="button secondary inverted"
+              href={brand.gamesSite}
+              target="_blank"
+              rel="noopener noreferrer"
+            >
+              Visit Nix Games
+            </a>
+          </div>
+          <div className="world-stack">
+            {phoenixWorlds.map((world) => (
+              <article key={world.title}>
+                <span>{world.label}</span>
+                <h3>{world.title}</h3>
+                <p>{world.text}</p>
+              </article>
+            ))}
           </div>
         </section>
 
@@ -292,13 +367,23 @@ export function Storefront() {
                 key={item.value}
                 type="button"
                 onClick={() => chooseFilter(item.value)}
+                aria-pressed={filter === item.value}
               >
                 {item.label}
               </button>
             ))}
           </div>
 
+          <div className="catalog-lanes" aria-label="Catalog lanes">
+            {catalogLanes.map((lane) => (
+              <span key={lane}>{lane}</span>
+            ))}
+          </div>
+
           <div className="product-grid">
+            {visibleProducts.length === 0 ? (
+              <p className="empty-state">No products match this filter yet.</p>
+            ) : null}
             {visibleProducts.map((product) => (
               <article className="product-card" key={product.id}>
                 <div
@@ -312,7 +397,7 @@ export function Storefront() {
                     height={480}
                     sizes="(max-width: 680px) 100vw, (max-width: 1100px) 50vw, 25vw"
                   />
-                  <span>{product.category}</span>
+                  <span>{categoryLabels[product.category]}</span>
                 </div>
                 <div className="product-copy">
                   <span className="status">{product.status}</span>
@@ -334,6 +419,9 @@ export function Storefront() {
                 >
                   Add to draft cart
                 </button>
+                <Link className="detail-link" href={`/products/${product.id}`}>
+                  View character page
+                </Link>
               </article>
             ))}
           </div>
@@ -353,7 +441,13 @@ export function Storefront() {
             <div className="picker-options" aria-label="Product picker choices">
               {(Object.entries(pickerMap) as [PickerKey, (typeof pickerMap)[PickerKey]][]).map(
                 ([key, item]) => (
-                  <button key={key} type="button" onClick={() => choosePicker(key)}>
+                  <button
+                    className={pickerKey === key ? "active" : ""}
+                    key={key}
+                    type="button"
+                    onClick={() => choosePicker(key)}
+                    aria-pressed={pickerKey === key}
+                  >
                     {item.label}
                   </button>
                 ),
@@ -545,7 +639,7 @@ export function Storefront() {
         </div>
         <div className="cart-total">
           <span>Estimated total</span>
-          <strong>{money(total)}</strong>
+          <strong role="status">{money(total)}</strong>
         </div>
         <a
           className="button primary full"
