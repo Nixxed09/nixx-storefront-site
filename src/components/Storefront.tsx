@@ -62,10 +62,10 @@ const catalogLanes = [
 
 const pickerMap = {
   gift: {
-    productId: "starter-squad",
+    productId: "starter-action-set",
     label: "Gift for a kid",
-    title: "Starter Squad Bundle",
-    text: "Best first gift path: one small bundle, clear color choice, and parent review before printing.",
+    title: "Starter Action Set",
+    text: "Best first gift path: a multi-character set with different colors, action poses, and parent review before printing.",
   },
   desk: {
     productId: "angel-of-peace",
