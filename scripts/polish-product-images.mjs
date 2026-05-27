@@ -29,14 +29,14 @@ function overlaySvg() {
     <svg width="${width}" height="${height}" viewBox="0 0 ${width} ${height}" xmlns="http://www.w3.org/2000/svg">
       <defs>
         <radialGradient id="studio" cx="48%" cy="34%" r="86%">
-          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.22"/>
-          <stop offset="58%" stop-color="#f7f7f5" stop-opacity="0.08"/>
-          <stop offset="100%" stop-color="#1f1f1f" stop-opacity="0.12"/>
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.08"/>
+          <stop offset="58%" stop-color="#f7f7f5" stop-opacity="0.02"/>
+          <stop offset="100%" stop-color="#1f1f1f" stop-opacity="0.06"/>
         </radialGradient>
         <linearGradient id="rim" x1="0" y1="0" x2="1" y2="1">
-          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.28"/>
+          <stop offset="0%" stop-color="#ffffff" stop-opacity="0.12"/>
           <stop offset="45%" stop-color="#ffffff" stop-opacity="0"/>
-          <stop offset="100%" stop-color="#000000" stop-opacity="0.08"/>
+          <stop offset="100%" stop-color="#000000" stop-opacity="0.04"/>
         </linearGradient>
       </defs>
       <rect width="${width}" height="${height}" fill="url(#studio)"/>
@@ -53,9 +53,9 @@ async function preparedBuffer(job) {
   }
 
   return image
-    .modulate({ brightness: 1.06, saturation: 0.74 })
-    .linear(0.94, 12)
-    .sharpen({ sigma: 0.56, m1: 0.38, m2: 1.18 })
+    .modulate({ brightness: 1.02, saturation: 0.94 })
+    .linear(1.01, -1)
+    .sharpen({ sigma: 0.48, m1: 0.32, m2: 1.05 })
     .toBuffer();
 }
 
