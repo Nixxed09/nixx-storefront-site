@@ -6,13 +6,14 @@ This site should stay simple until each integration is real. Use local hooks and
 
 | Need | Current site implementation | Future TE-Code source |
 |------|-----------------------------|-----------------------|
-| Product catalog | `src/data/products.ts` | `openbazaar-ai` marketplace/funnel data model |
-| Product visuals | Hero image in `public/images/` and generated color cards | `image-engine` generated product photos/mockups |
+| Product catalog | `src/data/products.ts` plus WordPress catalog lane chips | `openbazaar-ai` marketplace/funnel data model or WooCommerce export |
+| Product visuals | Optimized local photos in `public/images/products/` | `image-engine` generated product photos/mockups when local photos are missing |
 | Draft cart | React state in `src/components/Storefront.tsx`, mailto inquiry | Stripe/Square/Shopify or OpenBazaar flow |
-| Guided shopping | Not wired yet | `conversos` mission/widget |
-| Analytics | Not wired yet | AnalyticsOS or MarketingOS ingestion |
-| Campaigns | Manual launch copy | `MarketingOS` brand/campaign config |
+| Guided shopping | Local picker in `Storefront.tsx` | `conversos` mission/widget |
+| Analytics | LocalStorage, `window.dataLayer`, and `nixx:storefront-event` | AnalyticsOS or MarketingOS ingestion |
+| Campaigns | Manual launch copy and Nix Games brand bridge | `MarketingOS` brand/campaign config |
 | Product ideas | Static product list | `TrendOS` signals, `ProductOS` prioritization |
+| Phoenix brand | Local `D:\Phoenix\nix-code\nix-games-site` palette/type/world cues | Shared Phoenix/Nix brand package later |
 
 ## Event Contract
 

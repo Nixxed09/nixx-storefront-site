@@ -13,6 +13,9 @@
   --lemon: #ffd166;
   --clay: #a8552b;
   --shadow: 0 18px 50px rgba(35, 22, 12, 0.13);
+  --shadow-soft: 0 12px 34px rgba(35, 22, 12, 0.1);
+  --shadow-studio: 0 28px 70px rgba(35, 22, 12, 0.2);
+  --rim-light: inset 0 1px 0 rgba(255, 255, 255, 0.86);
   --glow: 0 0 18px rgba(255, 102, 0, 0.38);
   --radius: 8px;
   --max: 1180px;
@@ -28,11 +31,13 @@ html {
 
 body {
   margin: 0;
-  font-family: "Rajdhani", Arial, sans-serif;
+  font-family: var(--font-rajdhani), Arial, sans-serif;
   color: var(--ink);
   background:
-    linear-gradient(180deg, rgba(255, 215, 0, 0.08), transparent 22rem),
-    radial-gradient(circle at 12% 8%, rgba(255, 102, 0, 0.1), transparent 18rem),
+    radial-gradient(circle at 16% 6%, rgba(255, 255, 255, 0.95), transparent 18rem),
+    radial-gradient(circle at 82% 12%, rgba(255, 215, 0, 0.16), transparent 18rem),
+    linear-gradient(180deg, rgba(255, 215, 0, 0.1), transparent 24rem),
+    radial-gradient(circle at 12% 8%, rgba(255, 102, 0, 0.11), transparent 18rem),
     var(--paper);
 }
 
@@ -98,16 +103,17 @@ a:focus-visible {
   justify-content: space-between;
   gap: 1rem;
   padding: 0.85rem clamp(1rem, 4vw, 3rem);
-  background: rgba(251, 247, 239, 0.94);
+  background: rgba(251, 247, 239, 0.92);
   border-bottom: 1px solid var(--line);
   backdrop-filter: blur(12px);
+  box-shadow: 0 10px 30px rgba(35, 22, 12, 0.055);
 }
 
 .brand {
   display: inline-flex;
   align-items: center;
   gap: 0.65rem;
-  font-family: "Orbitron", "Trebuchet MS", Arial, sans-serif;
+  font-family: var(--font-orbitron), "Trebuchet MS", Arial, sans-serif;
   font-weight: 900;
   text-decoration: none;
 }
@@ -169,7 +175,7 @@ a:focus-visible {
 h1,
 h2,
 h3 {
-  font-family: "Orbitron", "Trebuchet MS", Arial, sans-serif;
+  font-family: var(--font-orbitron), "Trebuchet MS", Arial, sans-serif;
   letter-spacing: 0;
   line-height: 1;
 }
@@ -217,13 +223,19 @@ h3 {
 }
 
 .hero-media {
+  position: relative;
   margin: 0;
-  border: 2px solid var(--ink);
+  border: 1px solid rgba(21, 19, 18, 0.84);
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: var(--shadow);
+  box-shadow:
+    var(--rim-light),
+    0 22px 48px rgba(21, 19, 18, 0.18),
+    0 42px 120px rgba(255, 102, 0, 0.12);
   transform: rotate(1deg);
-  background: var(--panel);
+  background:
+    radial-gradient(circle at 28% 18%, rgba(255, 255, 255, 0.96), transparent 12rem),
+    linear-gradient(145deg, #fffdf8, #efe7dc);
 }
 
 .hero-media::before {
@@ -231,14 +243,30 @@ h3 {
   position: absolute;
   inset: 0;
   pointer-events: none;
-  box-shadow: inset 0 0 0 6px rgba(255, 215, 0, 0.16);
+  box-shadow:
+    inset 0 0 0 6px rgba(255, 255, 255, 0.22),
+    inset 0 -80px 120px rgba(21, 19, 18, 0.18);
   z-index: 2;
+}
+
+.hero-media::after,
+.product-detail-media::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, rgba(255, 255, 255, 0.28), transparent 34%),
+    radial-gradient(circle at 72% 22%, rgba(255, 215, 0, 0.12), transparent 16rem);
+  mix-blend-mode: screen;
+  z-index: 3;
 }
 
 .hero-media img {
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
+  filter: saturate(1.04) contrast(1.03);
 }
 
 .stats-strip {
@@ -303,6 +331,60 @@ section {
   margin: 0;
 }
 
+.world-section {
+  background:
+    radial-gradient(circle at top left, rgba(255, 102, 0, 0.28), transparent 22rem),
+    linear-gradient(135deg, #0a0a0a 0%, #1a0505 52%, #2d0a0a 100%);
+  color: white;
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(280px, 1fr);
+  gap: clamp(1.25rem, 4vw, 3rem);
+  align-items: center;
+  border-block: 1px solid rgba(255, 102, 0, 0.35);
+}
+
+.world-copy p:not(.eyebrow) {
+  color: #f4d9c4;
+  line-height: 1.65;
+  max-width: 38rem;
+}
+
+.world-copy .eyebrow {
+  color: var(--phoenix-gold);
+}
+
+.inverted {
+  color: white;
+  background: rgba(255, 102, 0, 0.08);
+  border-color: rgba(255, 215, 0, 0.65);
+}
+
+.world-stack {
+  display: grid;
+  gap: 0.8rem;
+}
+
+.world-stack article {
+  border: 1px solid rgba(255, 102, 0, 0.42);
+  border-radius: var(--radius);
+  background: rgba(255, 255, 255, 0.055);
+  padding: 1rem;
+  box-shadow: 0 16px 38px rgba(255, 69, 0, 0.12);
+}
+
+.world-stack span {
+  color: var(--phoenix-gold);
+  font-weight: 900;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+}
+
+.world-stack p {
+  color: #f0cdb6;
+  line-height: 1.55;
+  margin: 0.55rem 0 0;
+}
+
 .section-heading {
   max-width: 48rem;
   margin-bottom: 1.5rem;
@@ -331,6 +413,25 @@ section {
   border-color: var(--mint);
 }
 
+.catalog-lanes {
+  display: flex;
+  gap: 0.55rem;
+  overflow-x: auto;
+  padding: 0 0 1rem;
+  margin-bottom: 0.25rem;
+  scrollbar-width: thin;
+}
+
+.catalog-lanes span {
+  flex: 0 0 auto;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  background: rgba(255, 253, 248, 0.72);
+  padding: 0.42rem 0.7rem;
+  color: var(--muted);
+  font-weight: 800;
+}
+
 .product-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -338,14 +439,28 @@ section {
 }
 
 .product-card {
-  background: var(--panel);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.82), transparent 44%),
+    var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 1rem;
-  box-shadow: 0 8px 28px rgba(35, 22, 12, 0.08);
+  box-shadow: var(--shadow-soft);
   display: flex;
   flex-direction: column;
   gap: 0.8rem;
+  transition:
+    transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    box-shadow 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.product-card:hover {
+  transform: translateY(-4px);
+  border-color: color-mix(in srgb, var(--product-color, var(--ember)) 58%, var(--line));
+  box-shadow:
+    0 18px 42px rgba(35, 22, 12, 0.14),
+    0 26px 70px color-mix(in srgb, var(--product-color, var(--ember)) 18%, transparent);
 }
 
 .product-art {
@@ -423,6 +538,9 @@ section {
   border-radius: var(--radius);
   padding: clamp(1rem, 3vw, 2rem);
   border: 2px solid var(--ink);
+  box-shadow:
+    var(--rim-light),
+    0 22px 60px rgba(7, 59, 54, 0.18);
 }
 
 .custom-panel p {
@@ -542,7 +660,8 @@ section {
 
 @media (max-width: 900px) {
   .hero,
-  .custom-section {
+  .custom-section,
+  .world-section {
     grid-template-columns: 1fr;
   }
 
@@ -631,16 +750,24 @@ section {
   overflow: hidden;
   align-items: end;
   justify-items: start;
-  background: var(--ink);
+  background:
+    radial-gradient(circle at 28% 15%, rgba(255, 255, 255, 0.34), transparent 9rem),
+    linear-gradient(145deg, rgba(255, 255, 255, 0.12), rgba(21, 19, 18, 0.38)),
+    var(--ink);
   border-color: color-mix(in srgb, var(--product-color, var(--ink)) 70%, var(--ink));
   padding: 0.75rem;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.42),
+    inset 0 -55px 85px rgba(21, 19, 18, 0.28);
 }
 
 .product-art::after {
   content: "";
   position: absolute;
   inset: 0;
-  background: linear-gradient(180deg, rgba(21, 19, 18, 0.02), rgba(21, 19, 18, 0.62));
+  background:
+    linear-gradient(180deg, rgba(21, 19, 18, 0.01), rgba(21, 19, 18, 0.58)),
+    radial-gradient(circle at 70% 20%, color-mix(in srgb, var(--product-color, var(--ember)) 20%, transparent), transparent 9rem);
   z-index: 1;
 }
 
@@ -650,6 +777,12 @@ section {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  filter: saturate(1.07) contrast(1.04) brightness(1.02);
+  transition: transform 260ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.product-card:hover .product-art img {
+  transform: scale(1.045);
 }
 
 .product-art span {
@@ -692,7 +825,7 @@ section {
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 1rem;
-  box-shadow: 0 8px 28px rgba(35, 22, 12, 0.08);
+  box-shadow: var(--shadow-soft);
 }
 
 .story-card-grid span {
@@ -722,11 +855,13 @@ section {
 
 .picker-options,
 .picker-result {
-  background: var(--panel);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.78), transparent 52%),
+    var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 1rem;
-  box-shadow: 0 8px 28px rgba(35, 22, 12, 0.08);
+  box-shadow: var(--shadow-soft);
 }
 
 .picker-options {
@@ -737,6 +872,12 @@ section {
 .picker-options button {
   justify-content: flex-start;
   background: var(--panel);
+}
+
+.picker-options button.active {
+  border-color: var(--phoenix-primary);
+  background: #fff3df;
+  box-shadow: 0 8px 0 rgba(21, 19, 18, 0.16);
 }
 
 .picker-result {
@@ -777,7 +918,10 @@ section {
   border-radius: 50%;
   border: 2px solid var(--ink);
   background: var(--panel);
-  box-shadow: var(--shadow);
+  box-shadow:
+    var(--rim-light),
+    0 18px 42px rgba(35, 22, 12, 0.16),
+    0 0 70px rgba(255, 102, 0, 0.12);
 }
 
 .contact-actions {
@@ -785,6 +929,14 @@ section {
   flex-wrap: wrap;
   gap: 0.75rem;
   justify-content: flex-end;
+}
+
+.empty-state {
+  grid-column: 1 / -1;
+  border: 1px dashed var(--line);
+  border-radius: var(--radius);
+  padding: 1rem;
+  color: var(--muted);
 }
 
 .product-page {
@@ -815,18 +967,22 @@ section {
 }
 
 .product-detail-media {
+  position: relative;
   margin: 0;
-  border: 2px solid var(--ink);
+  border: 1px solid rgba(21, 19, 18, 0.84);
   border-radius: var(--radius);
   overflow: hidden;
-  box-shadow: var(--shadow);
-  background: var(--panel);
+  box-shadow: var(--shadow-studio);
+  background:
+    radial-gradient(circle at 26% 14%, rgba(255, 255, 255, 0.96), transparent 14rem),
+    linear-gradient(145deg, #fffdf8, #efe7dc);
 }
 
 .product-detail-media img {
   width: 100%;
   aspect-ratio: 4 / 3;
   object-fit: cover;
+  filter: saturate(1.06) contrast(1.04) brightness(1.02);
 }
 
 .product-detail-meta {
@@ -870,11 +1026,13 @@ section {
 
 .character-details article,
 .next-business-step {
-  background: var(--panel);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.84), transparent 54%),
+    var(--panel);
   border: 1px solid var(--line);
   border-radius: var(--radius);
   padding: 1rem;
-  box-shadow: 0 8px 28px rgba(35, 22, 12, 0.08);
+  box-shadow: var(--shadow-soft);
 }
 
 .character-details p,
@@ -897,6 +1055,7 @@ section {
   .picker-layout,
   .bench-section,
   .story-section,
+  .world-section,
   .product-hero-detail,
   .character-sheet {
     grid-template-columns: 1fr;

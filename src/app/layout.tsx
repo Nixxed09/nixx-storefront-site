@@ -1,5 +1,20 @@
-﻿import type { Metadata } from "next";
+import type { Metadata } from "next";
+import { Orbitron, Rajdhani } from "next/font/google";
 import "./globals.css";
+
+const orbitron = Orbitron({
+  subsets: ["latin"],
+  weight: ["700", "900"],
+  variable: "--font-orbitron",
+  display: "swap",
+});
+
+const rajdhani = Rajdhani({
+  subsets: ["latin"],
+  weight: ["400", "600", "700"],
+  variable: "--font-rajdhani",
+  display: "swap",
+});
 
 export const metadata: Metadata = {
   title: "Nixx 3D Printing | Dummy 13 Heroes by Phoenix",
@@ -22,7 +37,7 @@ export const metadata: Metadata = {
   },
   manifest: "/site.webmanifest",
   other: {
-    "theme-color": "#f15a24",
+    "theme-color": "#ff6600",
   },
 };
 
@@ -33,7 +48,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body>
+      <body className={`${orbitron.variable} ${rajdhani.variable}`}>
         <a className="skip-link" href="#main">
           Skip to main content
         </a>
