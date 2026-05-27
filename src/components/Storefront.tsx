@@ -281,7 +281,7 @@ export function Storefront() {
           </div>
           <figure className="hero-media">
             <Image
-              src="/images/products/hero-action.jpg"
+              src="/images/products/polished/starter-action-set.jpg"
               alt="Colorful 3D printed snap-fit toys on a maker workbench"
               width={1024}
               height={1024}
