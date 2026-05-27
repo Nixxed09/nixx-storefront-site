@@ -28,7 +28,13 @@ export const metadata: Metadata = {
       "Dummy 13 heroes, story-driven snap-fit figures, and custom print drops by Phoenix.",
     url: "https://nixx.it.com",
     siteName: "Nixx 3D Printing",
-    images: [{ url: "/images/products/hero-action.jpg", width: 1600, height: 1067 }],
+    images: [
+      {
+        url: "/images/products/polished/starter-action-set.jpg",
+        width: 1400,
+        height: 1050,
+      },
+    ],
     type: "website",
   },
   icons: {

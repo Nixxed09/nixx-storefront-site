@@ -11,7 +11,10 @@ type ProductPageProps = {
 };
 
 function money(value: number) {
-  return `$${value}`;
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(value);
 }
 
 export function generateStaticParams() {
@@ -45,7 +48,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
     notFound();
   }
 
-  const inquiryBody = `${product.name} inquiry\n\nPrice: ${money(product.price)}\nStatus: ${product.status}\nPrint timing: ${product.printTime}\nSafety note: ${product.ageNote}\n\nQuestions:\n- Preferred colors:\n- Pickup/shipping:\n- Timing:\n- Custom notes:`;
+  const inquiryBody = `${product.name} inquiry\n\nEstimated price: ${money(product.price)}\nStatus: ${product.status}\nPrint timing: ${product.printTime}\nSafety note: ${product.ageNote}\n\nQuestions:\n- Preferred colors:\n- Pickup/shipping:\n- Timing:\n- Custom notes:`;
   const inquiryHref = `mailto:${brand.contactEmail}?subject=${encodeURIComponent(
     `${product.name} inquiry`,
   )}&body=${encodeURIComponent(inquiryBody)}`;
@@ -53,7 +56,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
   return (
     <main className="product-page">
       <Link className="back-link" href="/#shop">
-        Back to shop
+        Back to storefront
       </Link>
 
       <section className="product-hero-detail">
@@ -79,7 +82,7 @@ export default async function ProductPage({ params }: ProductPageProps) {
         <figure className="product-detail-media">
           <Image
             src={product.image}
-            alt={`${product.name} product photo`}
+            alt={product.imageAlt}
             width={1200}
             height={900}
             priority

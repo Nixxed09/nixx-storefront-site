@@ -96,7 +96,10 @@ declare global {
 }
 
 function money(value: number) {
-  return `$${value}`;
+  return new Intl.NumberFormat("en-US", {
+    style: "currency",
+    currency: "USD",
+  }).format(value);
 }
 
 function cartEntries(cart: Cart) {
@@ -166,9 +169,9 @@ export function Storefront() {
                 entry.product.price,
               )} each, ${entry.product.printTime}, ${entry.product.ageNote})`,
           )
-          .join("\n")}\n\nEstimated total: ${money(
+          .join("\n")}\n\nEstimated inquiry total: ${money(
           total,
-        )}\n\nNotes: Please confirm colors, timing, pickup/shipping, and small-parts safety before printing.`
+        )}\n\nNotes: Please confirm colors, timing, pickup/shipping, final price, and small-parts safety before printing.`
       : "I want to ask about Nixx 3D Printing products.";
 
   const inquiryHref = `mailto:${brand.contactEmail}?subject=${encodeURIComponent(
@@ -247,10 +250,10 @@ export function Storefront() {
               return !open;
             });
           }}
-          aria-label="Open draft cart"
+          aria-label="Open inquiry list"
           aria-expanded={cartOpen}
         >
-          Cart <span>{totalItems}</span>
+          Inquiry <span>{totalItems}</span>
         </button>
       </header>
 
@@ -266,7 +269,7 @@ export function Storefront() {
             </p>
             <div className="hero-actions">
               <a className="button primary" href="#shop">
-                Shop starter drops
+                Browse starter drops
               </a>
               <a className="button secondary" href="#picker">
                 Find the right print
@@ -274,15 +277,15 @@ export function Storefront() {
             </div>
             <div className="hero-proof" aria-label="Store notes">
               <span>Parent-approved inquiry flow</span>
-              <span>Nix Games energy</span>
-              <span>No payment collected here</span>
+              <span>Linked to Nix Games</span>
+              <span>Inquiry first, payment later</span>
               <span>Small parts warning included</span>
             </div>
           </div>
           <figure className="hero-media">
             <Image
               src="/images/products/polished/starter-action-set.jpg"
-              alt="Colorful 3D printed snap-fit toys on a maker workbench"
+              alt="Group of Dummy 13 figures including skateboard, blaster, staff, and mini heroes"
               width={1024}
               height={1024}
               priority
@@ -292,12 +295,12 @@ export function Storefront() {
 
         <section className="stats-strip" aria-label="Store highlights">
           <div>
-            <strong>32+</strong>
-            <span>catalog ideas ready to sort</span>
+            <strong>{products.length}</strong>
+            <span>starter listings ready for inquiry</span>
           </div>
           <div>
             <strong>Nix Games</strong>
-            <span>brand language carried over</span>
+            <span>games, stories, and physical toys connected</span>
           </div>
           <div>
             <strong>Dummy 13</strong>
@@ -351,12 +354,12 @@ export function Storefront() {
 
         <section className="shop-section" id="shop">
           <div className="section-heading">
-            <p className="eyebrow">Starter shop</p>
-            <h2>Pick a print batch</h2>
+            <p className="eyebrow">Starter storefront</p>
+            <h2>Browse starter prints</h2>
             <p>
               These starter listings are set up like collectible character drops:
               clear category, print status, estimated price, safety note, and a
-              draft-cart inquiry path.
+              simple inquiry path.
             </p>
           </div>
 
@@ -392,7 +395,7 @@ export function Storefront() {
                 >
                   <Image
                     src={product.image}
-                    alt="Colorful 3D printed toys on a workbench"
+                    alt={product.imageAlt}
                     width={640}
                     height={480}
                     sizes="(max-width: 680px) 100vw, (max-width: 1100px) 50vw, 25vw"
@@ -417,7 +420,7 @@ export function Storefront() {
                   type="button"
                   onClick={() => addToCart(product.id)}
                 >
-                  Add to draft cart
+                  Add to inquiry
                 </button>
                 <Link className="detail-link" href={`/products/${product.id}`}>
                   View character page
@@ -433,8 +436,7 @@ export function Storefront() {
             <h2>Not sure what to choose?</h2>
             <p>
               Pick the kind of gift or project, and the site will suggest a
-              starter drop. This stays local for now and can become a real chat
-              helper later.
+              starter drop and build a cleaner inquiry message.
             </p>
           </div>
           <div className="picker-layout">
@@ -466,7 +468,7 @@ export function Storefront() {
                   type="button"
                   onClick={() => addToCart(pickerProduct.id, "picker")}
                 >
-                  Add {pickerProduct.name}
+                  Add {pickerProduct.name} to inquiry
                 </button>
               ) : null}
             </article>
@@ -505,7 +507,7 @@ export function Storefront() {
         <section className="custom-section" id="custom">
           <div>
             <p className="eyebrow">Custom prints</p>
-            <h2>Have an idea for a toy, desk thing, or game prop?</h2>
+            <h2>Have an idea for a toy, desk display, or game prop?</h2>
           </div>
           <div className="custom-panel">
             <p>
@@ -533,7 +535,7 @@ export function Storefront() {
           <ol className="process-list">
             <li>
               <strong>Choose a drop.</strong>
-              <span>Pick from available starter toys or build a draft cart.</span>
+              <span>Pick from available starter toys or build an inquiry list.</span>
             </li>
             <li>
               <strong>Send the inquiry.</strong>
@@ -609,18 +611,18 @@ export function Storefront() {
 
       <aside
         className={`cart-drawer ${cartOpen ? "open" : ""}`}
-        aria-label="Draft cart"
+        aria-label="Inquiry list"
         aria-hidden={!cartOpen}
       >
         <div className="cart-header">
-          <h2>Draft cart</h2>
+          <h2>Inquiry list</h2>
           <button type="button" onClick={() => setCartOpen(false)}>
             Close
           </button>
         </div>
         <div className="cart-items">
           {entries.length === 0 ? (
-            <p>Your draft cart is empty.</p>
+            <p>Your inquiry list is empty.</p>
           ) : (
             entries.map((entry) => (
               <div className="cart-row" key={entry.product.id}>
@@ -638,7 +640,7 @@ export function Storefront() {
           )}
         </div>
         <div className="cart-total">
-          <span>Estimated total</span>
+          <span>Estimated inquiry total</span>
           <strong role="status">{money(total)}</strong>
         </div>
         <a
@@ -652,7 +654,10 @@ export function Storefront() {
         >
           Send inquiry
         </a>
-        <p className="cart-note">No payment is collected on this starter site.</p>
+        <p className="cart-note">
+          This sends an inquiry only. Final price, timing, colors, and safety notes
+          are confirmed before printing.
+        </p>
       </aside>
     </>
   );

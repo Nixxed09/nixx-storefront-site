@@ -11,6 +11,7 @@ export type Product = {
   status: string;
   color: string;
   image: string;
+  imageAlt: string;
   printTime: string;
   ageNote: string;
   funnel: ProductFunnel;
@@ -32,6 +33,7 @@ export const products: Product[] = [
     status: "hero collection",
     color: "#26a69a",
     image: "/images/products/polished/angel-of-peace.jpg",
+    imageAlt: "Mint and white winged Dummy 13 guardian figure with a peace-sign pose",
     printTime: "multi-part print",
     ageNote: "Ages 6+",
     funnel: "gift",
@@ -52,6 +54,7 @@ export const products: Product[] = [
     status: "sports hero",
     color: "#f15a24",
     image: "/images/products/polished/disc-dasher.jpg",
+    imageAlt: "Orange and white Dummy 13 figure posed with a flying disc",
     printTime: "multi-part print",
     ageNote: "Ages 6+",
     funnel: "starter",
@@ -72,6 +75,7 @@ export const products: Product[] = [
     status: "blaster hero",
     color: "#4056f4",
     image: "/images/products/polished/battle-brawler.jpg",
+    imageAlt: "Blue and white Dummy 13 figure holding a translucent blue blaster",
     printTime: "batch print",
     ageNote: "Ages 6+",
     funnel: "starter",
@@ -92,6 +96,7 @@ export const products: Product[] = [
     status: "skate hero",
     color: "#ef4444",
     image: "/images/products/polished/skate-spark.jpg",
+    imageAlt: "Red and white Dummy 13 skateboard figure in a group action scene",
     printTime: "multi-part print",
     ageNote: "Ages 6+",
     funnel: "starter",
@@ -112,6 +117,7 @@ export const products: Product[] = [
     status: "accessory path",
     color: "#a8552b",
     image: "/images/products/polished/hero-gear-pack.jpg",
+    imageAlt: "White and tan Dummy 13 figure loaded with blasters, blades, and display gear",
     printTime: "quick batch",
     ageNote: "Small parts",
     funnel: "game",
@@ -124,21 +130,22 @@ export const products: Product[] = [
   },
   {
     id: "winged-guardian-poster",
-    name: "Winged Guardian Poster Pose",
+    name: "Winged Guardian Display Pose",
     category: "figures",
     description:
-      "Wide hero shot of the mint winged guardian with strong shadow wings and a poster-style pose.",
+      "Wide hero shot of the mint winged guardian with strong shadow wings and a display-ready pose.",
     price: 29.99,
     status: "guardian pose",
     color: "#26a69a",
     image: "/images/products/polished/winged-guardian-poster.jpg",
+    imageAlt: "Mint and white winged Dummy 13 guardian in a wide display pose",
     printTime: "multi-part print",
     ageNote: "Ages 6+",
     funnel: "gift",
     characterClass: "Guardian",
     motto: "Rise high. Guard the light.",
     origin:
-      "A display-focused version of the Angel of Peace, posed like a cover image for the first Dummy 13 story.",
+      "A display-focused version of the Angel of Peace, posed like the cover image for the first Dummy 13 story.",
     gear: ["wide wings", "mint joints", "peace sign", "poster shadow"],
     lesson: "A hero's pose can tell the first page of the story.",
   },
@@ -152,6 +159,7 @@ export const products: Product[] = [
     status: "bundle idea",
     color: "#151312",
     image: "/images/products/polished/starter-action-set.jpg",
+    imageAlt: "Group of colorful Dummy 13 figures including skateboard, blaster, staff, and mini heroes",
     printTime: "multi-print batch",
     ageNote: "Adult review",
     funnel: "bundle",
@@ -172,6 +180,7 @@ export const products: Product[] = [
     status: "inquiry only",
     color: "#f15a24",
     image: "/images/products/polished/custom-hero.jpg",
+    imageAlt: "Colorful Dummy 13 figures arranged as examples for a custom hero request",
     printTime: "quote first",
     ageNote: "Adult review",
     funnel: "custom",
