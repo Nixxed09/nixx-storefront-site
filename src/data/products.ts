@@ -111,7 +111,7 @@ export const products: Product[] = [
     price: 6,
     status: "accessory path",
     color: "#a8552b",
-    image: "/images/products/accessory-pack.jpg",
+    image: "/images/products/hero-gear-pack.png",
     printTime: "quick batch",
     ageNote: "Small parts",
     funnel: "game",
