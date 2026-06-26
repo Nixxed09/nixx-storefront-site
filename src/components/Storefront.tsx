@@ -1,9 +1,17 @@
 ﻿"use client";
 
-import { useMemo, useState, type CSSProperties } from "react";
+import {
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+  type CSSProperties,
+  type MouseEvent,
+} from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { brand } from "@/content/brand";
+import { faqs } from "@/data/faqs";
 import { products, type Product, type ProductCategory } from "@/data/products";
 
 type Filter = "all" | ProductCategory;
@@ -23,28 +31,44 @@ const filters: { label: string; value: Filter }[] = [
   { label: "Custom", value: "custom" },
 ];
 
+const filterCounts: Record<Filter, number> = {
+  all: products.length,
+  figures: products.filter((product) => product.category === "figures").length,
+  accessories: products.filter((product) => product.category === "accessories").length,
+  bundles: products.filter((product) => product.category === "bundles").length,
+  custom: products.filter((product) => product.category === "custom").length,
+};
+
 const categoryLabels: Record<ProductCategory, string> = {
-  figures: "figures",
-  accessories: "gear",
-  bundles: "bundles",
+  figures: "figure",
+  accessories: "accessory",
+  bundles: "bundle",
   custom: "custom",
+};
+
+const funnelLabels: Record<Product["funnel"], string> = {
+  starter: "Starter pick",
+  gift: "Gift pick",
+  game: "Play add-on",
+  bundle: "Gift set",
+  custom: "Custom request",
 };
 
 const phoenixWorlds = [
   {
-    title: "Light Warrior",
-    label: "Hero lane",
-    text: "Protection, courage, and shadow-boss stories from the Nix Games universe.",
+    title: "Characters",
+    label: "Story",
+    text: "Each figure can have a name, role, motto, challenge, and origin story.",
   },
   {
-    title: "Empire Flow",
-    label: "Builder lane",
-    text: "Automation, base-building, and resource strategy turned into gear packs and missions.",
+    title: "Missions",
+    label: "Play",
+    text: "Gear packs and team ideas give each figure a reason to move, battle, explore, or protect.",
   },
   {
-    title: "Dummy 13",
-    label: "Toy lane",
-    text: "Snap-fit figures with colorways, helmets, hands, wings, stands, and character drops.",
+    title: "Printed Toys",
+    label: "Build",
+    text: "Snap-fit figures can be printed with different colors, helmets, hands, wings, stands, and accessories.",
   },
 ];
 
@@ -65,25 +89,25 @@ const pickerMap = {
     productId: "starter-action-set",
     label: "Gift for a kid",
     title: "Starter Action Set",
-    text: "Best first gift path: a multi-character set with different colors, action poses, and parent review before printing.",
+    text: "A strong first gift with several characters, bright colors, action poses, and details confirmed before printing.",
   },
   desk: {
     productId: "angel-of-peace",
     label: "Display hero",
     title: "Angel of Peace",
-    text: "Best display path: a story-rich guardian figure with a strong silhouette and gift-ready presence.",
+    text: "Best for display: a winged guardian figure with a clear story and a bold shelf-ready pose.",
   },
   game: {
     productId: "builders-tool-pack",
     label: "Gear or game prop",
     title: "Hero Gear Pack",
-    text: "Best game path: extra gear, tools, and parts that connect the figures to missions and tabletop ideas.",
+    text: "A useful add-on for play: extra gear, tools, and parts that connect figures to missions and tabletop games.",
   },
   idea: {
     productId: "custom-hero",
     label: "Custom idea",
     title: "Custom Hero Request",
-    text: "Best custom path: describe the hero, colors, gear, motto, and timing so Phoenix can check printability.",
+    text: "Start here for a custom figure. Share the idea, colors, gear, size, and timing so Phoenix can review what is printable.",
   },
 } satisfies Record<string, { productId: string; label: string; title: string; text: string }>;
 
@@ -144,6 +168,9 @@ export function Storefront() {
   const [cart, setCart] = useState<Cart>({});
   const [cartOpen, setCartOpen] = useState(false);
   const [pickerKey, setPickerKey] = useState<PickerKey | null>(null);
+  const cartDrawerRef = useRef<HTMLElement | null>(null);
+  const cartCloseRef = useRef<HTMLButtonElement | null>(null);
+  const cartOpenerRef = useRef<HTMLElement | null>(null);
 
   const visibleProducts = useMemo(
     () =>
@@ -151,6 +178,10 @@ export function Storefront() {
         ? products
         : products.filter((product) => product.category === filter),
     [filter],
+  );
+  const featuredProducts = useMemo(
+    () => products.filter((product) => product.featured),
+    [],
   );
 
   const entries = cartEntries(cart);
@@ -160,6 +191,56 @@ export function Storefront() {
     0,
   );
 
+  useEffect(() => {
+    if (!cartOpen) {
+      return;
+    }
+
+    document.body.classList.add("scroll-locked");
+    cartCloseRef.current?.focus();
+
+    function handleKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        closeCart();
+      }
+
+      if (event.key === "Tab") {
+        const drawer = cartDrawerRef.current;
+        if (!drawer) {
+          return;
+        }
+
+        const focusable = Array.from(
+          drawer.querySelectorAll<HTMLElement>(
+            'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+          ),
+        );
+
+        const first = focusable[0];
+        const last = focusable[focusable.length - 1];
+
+        if (!first || !last) {
+          return;
+        }
+
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    }
+
+    window.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.body.classList.remove("scroll-locked");
+      window.removeEventListener("keydown", handleKeyDown);
+    };
+  }, [cartOpen]);
+
   const inquiryBody =
     entries.length > 0
       ? `${entries
@@ -167,12 +248,14 @@ export function Storefront() {
             (entry) =>
               `${entry.quantity} x ${entry.product.name} (${money(
                 entry.product.price,
-              )} each, ${entry.product.printTime}, ${entry.product.ageNote})`,
+              )} each, line estimate ${money(
+                entry.product.price * entry.quantity,
+              )}, ${entry.product.printTime}, ${entry.product.ageNote})`,
           )
-          .join("\n")}\n\nEstimated inquiry total: ${money(
+          .join("\n")}\n\nEstimated inquiry total before custom changes: ${money(
           total,
-        )}\n\nNotes: Please confirm colors, timing, pickup/shipping, final price, and small-parts safety before printing.`
-      : "I want to ask about Nixx 3D Printing products.";
+        )}\n\nNotes: Please confirm colors, timing, pickup or shipping, final price, and small-parts safety before printing.`
+      : "I want to ask about Nixx 3D Printing prints.";
 
   const inquiryHref = `mailto:${brand.contactEmail}?subject=${encodeURIComponent(
     "Nixx 3D Printing order inquiry",
@@ -185,6 +268,8 @@ export function Storefront() {
 
   function addToCart(id: string, source = "card") {
     const product = products.find((item) => item.id === id);
+    cartOpenerRef.current =
+      document.activeElement instanceof HTMLElement ? document.activeElement : null;
     setCart((current) => ({
       ...current,
       [id]: (current[id] ?? 0) + 1,
@@ -194,6 +279,18 @@ export function Storefront() {
       productId: id,
       source,
       funnel: product?.funnel,
+    });
+  }
+
+  function openCart(event: MouseEvent<HTMLElement>) {
+    cartOpenerRef.current = event.currentTarget;
+    setCartOpen(true);
+  }
+
+  function closeCart() {
+    setCartOpen(false);
+    window.requestAnimationFrame(() => {
+      cartOpenerRef.current?.focus();
     });
   }
 
@@ -226,60 +323,41 @@ export function Storefront() {
 
   return (
     <>
-      <header className="site-header">
-        <a className="brand" href="#top" aria-label="Nixx 3D Printing home">
-          <Image src="/images/phoenix-logo.png" alt="" width={40} height={40} />
-          <span>{brand.name}</span>
-        </a>
-        <nav className="nav" aria-label="Primary navigation">
-          <a href="#shop">Shop</a>
-          <a href="#picker">Picker</a>
-          <a href="#custom">Custom</a>
-          <a href="#process">Process</a>
-          <a href={brand.gamesSite} target="_blank" rel="noopener noreferrer">
-            Games
-          </a>
-          <a href="#contact">Contact</a>
-        </nav>
-        <button
-          className="cart-pill"
-          type="button"
-          onClick={() => {
-            setCartOpen((open) => {
-              trackStorefrontEvent("draft_cart_toggle", { open: !open });
-              return !open;
-            });
-          }}
-          aria-label="Open inquiry list"
-          aria-expanded={cartOpen}
-        >
-          Inquiry <span>{totalItems}</span>
-        </button>
-      </header>
-
       <main>
         <section className="hero" id="top">
           <div className="hero-copy">
-            <p className="eyebrow">Printed, snapped, and packed by Phoenix</p>
-            <h1>Dummy 13 heroes from Phoenix&apos;s world.</h1>
-            <p className="hero-text">
-              Phoenix is a kid builder, football dreamer, gamer, and storyteller.
-              Nixx turns his characters into snap-fit figures, gear packs,
-              starter squads, and custom hero ideas.
-            </p>
+            <p className="eyebrow">3D printed toys by Phoenix</p>
+            <h1>Dummy 13 figures with stories, gear, and custom options.</h1>
             <div className="hero-actions">
               <a className="button primary" href="#shop">
-                Browse starter drops
+                Browse Prints
               </a>
               <a className="button secondary" href="#picker">
-                Find the right print
+                Help Me Choose
               </a>
+              <button
+                className="cart-pill"
+                type="button"
+                onClick={(event) => {
+                  if (cartOpen) {
+                    closeCart();
+                    trackStorefrontEvent("draft_cart_toggle", { open: false });
+                  } else {
+                    openCart(event);
+                    trackStorefrontEvent("draft_cart_toggle", { open: true });
+                  }
+                }}
+                aria-label="Open inquiry list"
+                aria-expanded={cartOpen}
+              >
+                Inquiry List <span>{totalItems}</span>
+              </button>
             </div>
             <div className="hero-proof" aria-label="Store notes">
-              <span>Parent-approved inquiry flow</span>
+              <span>Parent-reviewed inquiries</span>
               <span>Linked to Nix Games</span>
-              <span>Inquiry first, payment later</span>
-              <span>Small parts warning included</span>
+              <span>Ask first, pay after details are confirmed</span>
+              <span>Small-parts notes included</span>
             </div>
           </div>
           <figure className="hero-media">
@@ -296,41 +374,35 @@ export function Storefront() {
         <section className="stats-strip" aria-label="Store highlights">
           <div>
             <strong>{products.length}</strong>
-            <span>starter listings ready for inquiry</span>
+            <span>prints available for inquiry</span>
           </div>
           <div>
             <strong>Nix Games</strong>
-            <span>games, stories, and physical toys connected</span>
+            <span>games, stories, and toys connected</span>
           </div>
           <div>
             <strong>Dummy 13</strong>
-            <span>heroes, gear, and bundles</span>
+            <span>figures, gear, and gift sets</span>
           </div>
         </section>
 
         <section className="story-section" aria-labelledby="story-heading">
           <div className="story-lead">
-            <p className="eyebrow">Why Nixx exists</p>
-            <h2 id="story-heading">Phoenix builds worlds, not just toys.</h2>
-          </div>
-          <div className="story-copy">
-            <p>{brand.makerStory}</p>
-            <p>
-              Each Dummy 13 figure can grow into a mini legend: a name, motto,
-              class, signature gear, origin story, and a challenge that teaches
-              courage, creativity, grit, or kindness.
-            </p>
+            <h2 id="story-heading">
+              My name is Phoenix and I am a dedicated kid planning for a bright
+              future.
+            </h2>
           </div>
         </section>
 
         <section className="world-section" aria-labelledby="world-heading">
           <div className="world-copy">
-            <p className="eyebrow">Phoenix brand bridge</p>
-            <h2 id="world-heading">The toy shop should feel connected to the games.</h2>
+            <p className="eyebrow">Connected to Nix Games</p>
+            <h2 id="world-heading">The toys connect to the games.</h2>
             <p>
-              Nix Games brings the fire, glow, and heroic language. Nixx 3D
-              Printing turns that energy into physical characters parents can
-              understand and kids can actually play with.
+              Nix Games gives Phoenix&apos;s characters missions and worlds. Nixx
+              3D Printing turns those same characters into physical figures kids
+              can collect, play with, and display.
             </p>
             <a
               className="button secondary inverted"
@@ -354,13 +426,28 @@ export function Storefront() {
 
         <section className="shop-section" id="shop">
           <div className="section-heading">
-            <p className="eyebrow">Starter storefront</p>
-            <h2>Browse starter prints</h2>
+            <p className="eyebrow">Shop</p>
+            <h2>Browse figures, accessories, bundles, and custom requests</h2>
             <p>
-              These starter listings are set up like collectible character drops:
-              clear category, print status, estimated price, safety note, and a
-              simple inquiry path.
+              Each listing includes an estimated price, print note, safety note,
+              and a simple way to ask about the item before ordering.
             </p>
+          </div>
+
+          <div className="featured-products" aria-label="Best places to start">
+            <div>
+              <p className="eyebrow">Best places to start</p>
+              <h3>Recommended first picks</h3>
+            </div>
+            <div className="featured-product-list">
+              {featuredProducts.map((product) => (
+                <a href={`/products/${product.id}`} key={product.id}>
+                  <span>{funnelLabels[product.funnel]}</span>
+                  <strong>{product.name}</strong>
+                  <small>Est. {money(product.price)}</small>
+                </a>
+              ))}
+            </div>
           </div>
 
           <div className="filters" aria-label="Product filters">
@@ -372,12 +459,16 @@ export function Storefront() {
                 onClick={() => chooseFilter(item.value)}
                 aria-pressed={filter === item.value}
               >
-                {item.label}
+                {item.label} <span>{filterCounts[item.value]}</span>
               </button>
             ))}
           </div>
 
-          <div className="catalog-lanes" aria-label="Catalog lanes">
+          <p className="catalog-count" role="status">
+            Showing {visibleProducts.length} of {products.length} prints
+          </p>
+
+          <div className="catalog-lanes" aria-label="Product types">
             {catalogLanes.map((lane) => (
               <span key={lane}>{lane}</span>
             ))}
@@ -385,7 +476,7 @@ export function Storefront() {
 
           <div className="product-grid">
             {visibleProducts.length === 0 ? (
-              <p className="empty-state">No products match this filter yet.</p>
+              <p className="empty-state">No prints match this filter yet.</p>
             ) : null}
             {visibleProducts.map((product) => (
               <article className="product-card" key={product.id}>
@@ -401,6 +492,7 @@ export function Storefront() {
                     sizes="(max-width: 680px) 100vw, (max-width: 1100px) 50vw, 25vw"
                   />
                   <span>{categoryLabels[product.category]}</span>
+                  {product.featured ? <strong>Featured</strong> : null}
                 </div>
                 <div className="product-copy">
                   <span className="status">{product.status}</span>
@@ -411,19 +503,29 @@ export function Storefront() {
                   <span>{product.printTime}</span>
                   <span>{product.ageNote}</span>
                 </div>
+                <div className="product-card-tags" aria-label={`${product.name} tags`}>
+                  {product.tags.slice(0, 3).map((tag) => (
+                    <span key={tag}>{tag}</span>
+                  ))}
+                </div>
                 <div className="product-meta">
-                  <span className="price">{money(product.price)}</span>
-                  <span className="status">{product.funnel}</span>
+                  <span className="price">Est. {money(product.price)}</span>
+                  <span className="status">{funnelLabels[product.funnel]}</span>
                 </div>
                 <button
                   className="add-button"
                   type="button"
                   onClick={() => addToCart(product.id)}
+                  aria-label={`Add ${product.name} to inquiry list`}
                 >
                   Add to inquiry
                 </button>
-                <Link className="detail-link" href={`/products/${product.id}`}>
-                  View character page
+                <Link
+                  className="detail-link"
+                  href={`/products/${product.id}`}
+                  aria-label={`View details for ${product.name}`}
+                >
+                  View print details
                 </Link>
               </article>
             ))}
@@ -432,15 +534,15 @@ export function Storefront() {
 
         <section className="picker-section" id="picker">
           <div className="section-heading">
-            <p className="eyebrow">Guided picker</p>
-            <h2>Not sure what to choose?</h2>
+            <p className="eyebrow">Help me choose</p>
+            <h2>Not sure where to start?</h2>
             <p>
-              Pick the kind of gift or project, and the site will suggest a
-              starter drop and build a cleaner inquiry message.
+              Choose the kind of gift or project you have in mind, and Nixx will
+              suggest a good starting point.
             </p>
           </div>
           <div className="picker-layout">
-            <div className="picker-options" aria-label="Product picker choices">
+            <div className="picker-options" aria-label="Print choices">
               {(Object.entries(pickerMap) as [PickerKey, (typeof pickerMap)[PickerKey]][]).map(
                 ([key, item]) => (
                   <button
@@ -456,17 +558,18 @@ export function Storefront() {
               )}
             </div>
             <article className="picker-result">
-              <span className="status">{picker ? "Suggested path" : "Start here"}</span>
-              <h3>{picker?.title ?? "Choose a path"}</h3>
+              <span className="status">{picker ? "Suggested print" : "Start here"}</span>
+              <h3>{picker?.title ?? "Choose an option"}</h3>
               <p>
                 {picker?.text ??
-                  "Answer one quick prompt to get a product suggestion and a cleaner inquiry message."}
+                  "Pick one option to get a suggestion for a gift, display piece, game prop, or custom print."}
               </p>
               {pickerProduct ? (
                 <button
                   className="add-button"
                   type="button"
                   onClick={() => addToCart(pickerProduct.id, "picker")}
+                  aria-label={`Add ${pickerProduct.name} to inquiry list`}
                 >
                   Add {pickerProduct.name} to inquiry
                 </button>
@@ -477,29 +580,29 @@ export function Storefront() {
 
         <section className="storybook-section" aria-labelledby="storybook-heading">
           <div className="section-heading">
-            <p className="eyebrow">Character books</p>
-            <h2 id="storybook-heading">The next upgrade is story.</h2>
+            <p className="eyebrow">Character stories</p>
+            <h2 id="storybook-heading">Every figure can have a story.</h2>
             <p>
-              The Phoenix docs make the best product idea clear: every figure
-              should have a life beyond the print. Stories make the toys more
-              collectible, more personal, and easier for kids to imagine with.
+              A printed figure is more fun when it has a name, mission, and
+              reason to exist. Stories make the toys more personal and easier to
+              play with.
             </p>
           </div>
           <div className="story-card-grid">
             <article>
               <span>01</span>
               <h3>Origin</h3>
-              <p>Where the hero came from, what zone they protect, and why they matter.</p>
+              <p>Where the hero came from, what they protect, and why they matter.</p>
             </article>
             <article>
               <span>02</span>
               <h3>Gear</h3>
-              <p>Helmet, weapon, armor, tool pack, special move, and power-up moment.</p>
+              <p>The helmet, armor, tools, weapons, or accessories that make the hero unique.</p>
             </article>
             <article>
               <span>03</span>
               <h3>Lesson</h3>
-              <p>A challenge that ends with courage, cleverness, kindness, or grit.</p>
+              <p>A challenge that helps the hero show courage, cleverness, kindness, or grit.</p>
             </article>
           </div>
         </section>
@@ -511,10 +614,9 @@ export function Storefront() {
           </div>
           <div className="custom-panel">
             <p>
-              Send the idea, size, colors, and when you need it. Phoenix can
-              review what is printable, what needs support, what should be
-              simplified, whether the finished print has small parts, and what
-              kind of story the character should carry.
+              Send the idea, size, colors, and timing. Phoenix can review what
+              can print cleanly, what may need to be simplified, whether it has
+              small parts, and what story could go with the character.
             </p>
             <a
               className="button primary"
@@ -530,36 +632,53 @@ export function Storefront() {
         <section className="process-section" id="process">
           <div className="section-heading">
             <p className="eyebrow">How it works</p>
-            <h2>Simple enough to run now, ready to upgrade later</h2>
+            <h2>Ask first. Confirm the details. Then print.</h2>
           </div>
           <ol className="process-list">
             <li>
-              <strong>Choose a drop.</strong>
-              <span>Pick from available starter toys or build an inquiry list.</span>
+              <strong>Choose a print.</strong>
+              <span>Pick an available print or build an inquiry list.</span>
             </li>
             <li>
               <strong>Send the inquiry.</strong>
-              <span>The site prepares a message instead of collecting payment.</span>
+              <span>The site prepares a message with the items and notes.</span>
             </li>
             <li>
               <strong>Confirm the details.</strong>
               <span>
-                Colors, pickup or shipping, timing, and small-parts safety get
-                checked before printing.
+                Colors, pickup or shipping, timing, final price, and small-parts
+                safety are checked before printing.
               </span>
             </li>
           </ol>
         </section>
 
+        <section className="faq-section" id="faq" aria-labelledby="faq-heading">
+          <div className="section-heading">
+            <h2 id="faq-heading">Questions before you send an inquiry</h2>
+            <p>
+              Nixx uses an inquiry-first process so every print can be checked
+              for colors, timing, final price, and small-parts safety.
+            </p>
+          </div>
+          <div className="faq-grid">
+            {faqs.map((faq) => (
+              <article key={faq.question}>
+                <h3>{faq.question}</h3>
+                <p>{faq.answer}</p>
+              </article>
+            ))}
+          </div>
+        </section>
+
         <section className="bench-section" aria-label="Maker bench">
           <div className="bench-copy">
-            <p className="eyebrow">Maker bench</p>
-            <h2>Built around Phoenix&apos;s actual creative lanes.</h2>
+            <p className="eyebrow">What comes next</p>
+            <h2>More figures, stories, and game ideas are coming.</h2>
             <p>
-              The store can connect to his games, Dummy 13 stories, football
-              heroes, and future books. As new prints are photographed, each card
-              can get its own picture, colorway, print time, availability note,
-              and origin-story link.
+              As new prints are made and photographed, each listing can get its
+              own image, color options, print note, availability note, and
+              character story.
             </p>
             <a
               className="button secondary"
@@ -571,7 +690,7 @@ export function Storefront() {
             </a>
           </div>
           <Image
-            src="/images/phoenix-logo.png"
+            src={brand.logoPath}
             alt="Phoenix logo for Nix projects"
             width={260}
             height={260}
@@ -580,12 +699,12 @@ export function Storefront() {
 
         <section className="contact-section" id="contact">
           <div>
-            <p className="eyebrow">Business base</p>
+            <p className="eyebrow">About the store</p>
             <h2>{brand.name}</h2>
             <p>
-              Built for toys, custom prints, future drops, and a real storefront
-              path. Recommended for ages 6+ with adult review for small parts.
-              Made to prove kids can build amazing things, not just play with them.
+              Built for 3D printed toys, custom print requests, product updates,
+              and character stories. Recommended for ages 6+ with adult review
+              for small parts.
             </p>
           </div>
           <div className="contact-actions">
@@ -609,32 +728,63 @@ export function Storefront() {
         </section>
       </main>
 
+      <button
+        className={`cart-backdrop ${cartOpen ? "open" : ""}`}
+        type="button"
+        onClick={closeCart}
+        aria-label="Close inquiry list"
+        tabIndex={cartOpen ? 0 : -1}
+      />
       <aside
         className={`cart-drawer ${cartOpen ? "open" : ""}`}
-        aria-label="Inquiry list"
         aria-hidden={!cartOpen}
+        aria-labelledby="cart-heading"
+        aria-modal={cartOpen}
+        ref={cartDrawerRef}
+        role="dialog"
       >
         <div className="cart-header">
-          <h2>Inquiry list</h2>
-          <button type="button" onClick={() => setCartOpen(false)}>
+          <h2 id="cart-heading">Inquiry list</h2>
+          <button type="button" onClick={closeCart} ref={cartCloseRef}>
             Close
           </button>
         </div>
         <div className="cart-items">
           {entries.length === 0 ? (
-            <p>Your inquiry list is empty.</p>
+            <div className="cart-empty">
+              <p>Your inquiry list is empty.</p>
+              <a className="button secondary full" href="#shop" onClick={closeCart}>
+                Browse Prints
+              </a>
+              <a className="button secondary full" href="#picker" onClick={closeCart}>
+                Help Me Choose
+              </a>
+            </div>
           ) : (
             entries.map((entry) => (
               <div className="cart-row" key={entry.product.id}>
                 <div>
                   <strong>{entry.product.name}</strong>
                   <span>
-                    {entry.quantity} x {money(entry.product.price)}
+                    {entry.quantity} at {money(entry.product.price)}
                   </span>
                 </div>
-                <button type="button" onClick={() => removeFromCart(entry.product.id)}>
-                  Remove
-                </button>
+                <div className="cart-row-actions">
+                  <button
+                    type="button"
+                    onClick={() => addToCart(entry.product.id, "cart")}
+                    aria-label={`Add one more ${entry.product.name}`}
+                  >
+                    Add one
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => removeFromCart(entry.product.id)}
+                    aria-label={`Remove one ${entry.product.name}`}
+                  >
+                    Remove one
+                  </button>
+                </div>
               </div>
             ))
           )}
@@ -655,8 +805,8 @@ export function Storefront() {
           Send inquiry
         </a>
         <p className="cart-note">
-          This sends an inquiry only. Final price, timing, colors, and safety notes
-          are confirmed before printing.
+          This sends an inquiry only. Final price, timing, colors, and safety
+          notes are confirmed before anything is printed.
         </p>
       </aside>
     </>

@@ -1,5 +1,10 @@
-import type { Metadata } from "next";
+import type { Metadata, Viewport } from "next";
 import { Orbitron, Rajdhani } from "next/font/google";
+import { SiteFooter } from "@/components/SiteFooter";
+import { SiteHeader } from "@/components/SiteHeader";
+import { brand } from "@/content/brand";
+import { jsonLd, siteStructuredData } from "@/lib/structured-data";
+import { siteUrl } from "@/lib/site-url";
 import "./globals.css";
 
 const orbitron = Orbitron({
@@ -16,35 +21,52 @@ const rajdhani = Rajdhani({
   display: "swap",
 });
 
+const siteTitle = `${brand.name} | Dummy 13 Figures by ${brand.maker}`;
 export const metadata: Metadata = {
-  title: "Nixx 3D Printing | Dummy 13 Heroes by Phoenix",
-  description:
-    "Nixx 3D Printing is Phoenix's storefront for Dummy 13 heroes, story-driven snap-fit toys, accessories, and custom print ideas.",
-  authors: [{ name: "Phoenix" }],
-  metadataBase: new URL("https://nixx.it.com"),
+  title: {
+    default: siteTitle,
+    template: `%s | ${brand.name}`,
+  },
+  description: brand.description,
+  applicationName: brand.name,
+  authors: [{ name: brand.maker }],
+  creator: brand.maker,
+  publisher: brand.name,
+  keywords: brand.keywords,
+  metadataBase: new URL(siteUrl),
+  alternates: {
+    canonical: "/",
+  },
   openGraph: {
-    title: "Nixx 3D Printing",
-    description:
-      "Dummy 13 heroes, story-driven snap-fit figures, and custom print drops by Phoenix.",
-    url: "https://nixx.it.com",
-    siteName: "Nixx 3D Printing",
+    title: siteTitle,
+    description: brand.socialDescription,
+    url: siteUrl,
+    siteName: brand.name,
     images: [
       {
-        url: "/images/products/polished/starter-action-set.jpg",
+        url: brand.socialImagePath,
         width: 1400,
         height: 1050,
       },
     ],
+    locale: "en_US",
     type: "website",
+  },
+  twitter: {
+    card: "summary_large_image",
+    title: siteTitle,
+    description: brand.socialDescription,
+    images: [brand.socialImagePath],
   },
   icons: {
     icon: "/favicon.ico",
     apple: "/apple-touch-icon.png",
   },
   manifest: "/site.webmanifest",
-  other: {
-    "theme-color": "#ff6600",
-  },
+};
+
+export const viewport: Viewport = {
+  themeColor: "#ff6600",
 };
 
 export default function RootLayout({
@@ -55,10 +77,16 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${orbitron.variable} ${rajdhani.variable}`}>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: jsonLd(siteStructuredData()) }}
+        />
         <a className="skip-link" href="#main">
           Skip to main content
         </a>
+        <SiteHeader />
         <div id="main">{children}</div>
+        <SiteFooter />
       </body>
     </html>
   );

@@ -5,14 +5,28 @@ export const brand = {
   github: "https://github.com/Nixxed09",
   gamesSite: "https://www.nix-games.com/",
   contactEmail: "orders@nixx.it.com",
+  logoPath: "/images/phoenix-logo.png",
+  socialImagePath: "/images/products/polished/starter-action-set.jpg",
+  catalogUpdated: "June 2026",
+  catalogUpdatedDate: "2026-06-01",
   description:
-    "Phoenix's maker storefront for Dummy 13 heroes, snap-fit toys, story-driven figures, accessories, and custom print ideas.",
+    "Phoenix's shop for 3D printed Dummy 13 figures, accessories, gift sets, and custom print requests.",
+  socialDescription:
+    "3D printed Dummy 13 figures, accessories, gift sets, and custom print requests designed by Phoenix.",
+  keywords: [
+    "Nixx 3D Printing",
+    "Dummy 13",
+    "3D printed toys",
+    "custom 3D prints",
+    "Phoenix",
+    "Nix Games",
+  ],
   valueProposition:
-    "3D printed heroes with real maker energy: colorful batches, character stories, clear prices, custom ideas, and a parent-reviewed inquiry path.",
+    "Colorful 3D printed heroes with clear prices, simple safety notes, custom options, and an inquiry-first ordering process.",
   mission:
-    "Prove kids can build amazing things, not just play with them, by turning imagination into figures, games, and stories.",
+    "Turn Phoenix's character ideas into printed figures, stories, and games that kids can collect and play with.",
   makerStory:
-    "Phoenix is a young builder, athlete, gamer, and storyteller who sees worlds where other people see parts. Nixx turns that energy into collectible characters kids can play with, display, and imagine into bigger adventures.",
+    "Phoenix is a young builder, athlete, gamer, and storyteller. He starts with character ideas, then turns them into printed figures, game missions, and short stories. Nixx is where those ideas become toys people can ask about, collect, and display.",
   audience: ["kids", "parents", "gift buyers", "local supporters", "young creators"],
   tones: ["heroic", "playful", "clear", "maker-built", "trustworthy"],
 };

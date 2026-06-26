@@ -12,6 +12,8 @@ export type Product = {
   color: string;
   image: string;
   imageAlt: string;
+  detailImage?: string;
+  detailImageAlt?: string;
   printTime: string;
   ageNote: string;
   funnel: ProductFunnel;
@@ -20,6 +22,8 @@ export type Product = {
   origin: string;
   gear: string[];
   lesson: string;
+  tags: string[];
+  featured?: boolean;
 };
 
 export const products: Product[] = [
@@ -28,9 +32,9 @@ export const products: Product[] = [
     name: "Angel of Peace",
     category: "figures",
     description:
-      "Winged guardian hero inspired by protection, kindness, and the light-versus-dark worlds Phoenix builds.",
+      "A winged guardian figure inspired by protection, kindness, and Phoenix's hero stories.",
     price: 29.99,
-    status: "hero collection",
+    status: "guardian figure",
     color: "#26a69a",
     image: "/images/products/polished/angel-of-peace.jpg",
     imageAlt: "Mint and white winged Dummy 13 guardian figure with a peace-sign pose",
@@ -40,16 +44,18 @@ export const products: Product[] = [
     characterClass: "Guardian",
     motto: "Protect the light. Keep the peace.",
     origin:
-      "A calm winged hero from the Bright Zone who steps in when a squad needs courage and protection.",
+      "A calm winged hero who steps in when a team needs courage, protection, and a little light.",
     gear: ["wing armor", "light shield", "mint energy core"],
     lesson: "Real strength means protecting people without losing kindness.",
+    tags: ["guardian", "wings", "display", "gift"],
+    featured: true,
   },
   {
     id: "disc-dasher",
-    name: "Disc Dasher",
+    name: "Football Pro",
     category: "figures",
     description:
-      "Orange action hero posed mid-catch with a flying disc, built for speed scenes and sports stories.",
+      "An orange sports figure posed with a flying disc, made for action scenes and fast-moving stories.",
     price: 29.99,
     status: "sports hero",
     color: "#f15a24",
@@ -61,16 +67,17 @@ export const products: Product[] = [
     characterClass: "Sky Runner",
     motto: "Track the throw. Trust the leap.",
     origin:
-      "A high-jump hero from the Open Field Zone who turns every throw into a chance to prove focus and timing.",
+      "A high-jump hero who turns every throw into a chance to show focus, timing, and confidence.",
     gear: ["flying disc", "orange speed joints", "jump stance"],
     lesson: "Practice and timing turn a hard catch into a highlight.",
+    tags: ["sports", "flying disc", "action pose", "starter"],
   },
   {
     id: "battle-brawler",
     name: "Battle Brawler",
     category: "figures",
     description:
-      "Blue blaster hero from the action set, built for mission scenes, boss fights, and high-energy display shots.",
+      "A blue blaster figure made for mission scenes, boss fights, and high-energy display poses.",
     price: 29.99,
     status: "blaster hero",
     color: "#4056f4",
@@ -82,16 +89,17 @@ export const products: Product[] = [
     characterClass: "Blaster",
     motto: "Stand firm. Aim true.",
     origin:
-      "A mission-ready fighter from the Blue Zone who steps into the front line when the squad needs cover.",
+      "A mission-ready fighter who steps forward when the team needs cover and steady aim.",
     gear: ["blue blaster", "back blade", "battle stance"],
     lesson: "Courage means staying steady when the mission gets loud.",
+    tags: ["blaster", "mission", "battle", "starter"],
   },
   {
     id: "skate-spark",
     name: "Skate Spark",
     category: "figures",
     description:
-      "Red skateboard hero surrounded by other characters, made for motion, balance, and street-scene stories.",
+      "A red skateboard figure made for motion, balance, and street-style stories.",
     price: 29.99,
     status: "skate hero",
     color: "#ef4444",
@@ -103,18 +111,19 @@ export const products: Product[] = [
     characterClass: "Street Rider",
     motto: "Balance the chaos. Ride the edge.",
     origin:
-      "A street-zone rider who moves through the Dummy 13 world on a red board, dodging shadows and finding new routes.",
+      "A street rider who finds new routes, keeps moving, and stays balanced when things get chaotic.",
     gear: ["red skateboard", "street stance", "quick-turn joints"],
     lesson: "Balance matters most when everything around you is moving.",
+    tags: ["skateboard", "street", "motion", "starter"],
   },
   {
     id: "builders-tool-pack",
     name: "Hero Gear Pack",
     category: "accessories",
     description:
-      "Weapons, tools, helmets, and extra parts that let each Dummy 13 hero change class, mission, or backstory.",
+      "Extra weapons, tools, helmets, and parts that help a Dummy 13 figure take on a new role.",
     price: 6,
-    status: "accessory path",
+    status: "accessory set",
     color: "#a8552b",
     image: "/images/products/polished/hero-gear-pack.jpg",
     imageAlt: "White and tan Dummy 13 figure loaded with blasters, blades, and display gear",
@@ -124,16 +133,17 @@ export const products: Product[] = [
     characterClass: "Arsenal Hero",
     motto: "New gear, new mission.",
     origin:
-      "A white-and-tan hero loaded with blasters, blades, and display gear, showing how accessories change the whole character.",
+      "A white-and-tan hero loaded with blasters, blades, and display gear to show how accessories can change a character.",
     gear: ["tan blaster", "back blades", "leg holsters", "display stand"],
     lesson: "The right gear helps a hero step into a bigger mission.",
+    tags: ["gear", "accessories", "tools", "game prop"],
   },
   {
     id: "winged-guardian-poster",
     name: "Winged Guardian Display Pose",
     category: "figures",
     description:
-      "Wide hero shot of the mint winged guardian with strong shadow wings and a display-ready pose.",
+      "A display version of the mint winged guardian with wide wings and a bold shelf-ready pose.",
     price: 29.99,
     status: "guardian pose",
     color: "#26a69a",
@@ -145,37 +155,43 @@ export const products: Product[] = [
     characterClass: "Guardian",
     motto: "Rise high. Guard the light.",
     origin:
-      "A display-focused version of the Angel of Peace, posed like the cover image for the first Dummy 13 story.",
+      "A display-focused version of the Angel of Peace, posed like the cover of a hero story.",
     gear: ["wide wings", "mint joints", "peace sign", "poster shadow"],
     lesson: "A hero's pose can tell the first page of the story.",
+    tags: ["guardian", "wings", "display", "story"],
   },
   {
     id: "starter-action-set",
     name: "Starter Action Set",
     category: "bundles",
     description:
-      "Group-shot bundle with multiple Dummy 13 heroes, action poses, bright colors, and starter story prompts.",
+      "A gift set with multiple Dummy 13 figures, bright colors, action poses, and starter story ideas.",
     price: 79.99,
-    status: "bundle idea",
+    status: "starter bundle",
     color: "#151312",
     image: "/images/products/polished/starter-action-set.jpg",
     imageAlt: "Group of colorful Dummy 13 figures including skateboard, blaster, staff, and mini heroes",
+    detailImage: "/images/products/polished/starter-action-set-full.jpg",
+    detailImageAlt:
+      "Full Starter Action Set showing multiple Dummy 13 heroes, gear, and action poses together",
     printTime: "multi-print batch",
     ageNote: "Adult review",
     funnel: "bundle",
     characterClass: "Squad",
     motto: "Every hero needs a team.",
     origin:
-      "A first collection path for starting the Dummy 13 universe with multiple heroes, sports moves, gear, and story roles.",
+      "A first collection for starting a Dummy 13 world with heroes, sports moves, gear, and story roles.",
     gear: ["pink staff hero", "red skateboard hero", "blue blaster hero", "mint mini hero"],
     lesson: "Teams work best when every character brings a different strength.",
+    tags: ["bundle", "gift set", "team", "starter"],
+    featured: true,
   },
   {
     id: "custom-hero",
     name: "Custom Hero Request",
     category: "custom",
     description:
-      "Request a hero colorway, accessory combo, motto, or simple character idea for Phoenix to review.",
+      "Request custom colors, accessories, a motto, or a character idea for Phoenix to review.",
     price: 29.99,
     status: "inquiry only",
     color: "#f15a24",
@@ -187,9 +203,11 @@ export const products: Product[] = [
     characterClass: "Custom",
     motto: "Your idea becomes the next legend.",
     origin:
-      "A request path for turning a colorway, accessory combo, motto, or simple character idea into a reviewed print.",
+      "A way to turn custom colors, accessories, a motto, or a character idea into a reviewed print request.",
     gear: ["custom colors", "chosen accessories", "optional motto"],
     lesson: "The best ideas get stronger when they are shaped, tested, and simplified.",
+    tags: ["custom", "colors", "accessories", "request"],
+    featured: true,
   },
 ];
 
